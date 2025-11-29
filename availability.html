@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Availability Calendar - Terrain Vanabas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e8f5e9;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      background: #2d5016;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+      background: #4caf50;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .page-title {
+      color: #2d5016;
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .calendar-controls {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .calendar-controls h3 {
+      color: #2d5016;
+      font-size: 22px;
+    }
+
+    .month-nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    .month-nav button {
+      background: #2d5016;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .month-nav button:hover {
+      background: #4caf50;
+    }
+
+    .calendar-wrapper {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .calendar-scroll {
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    .calendar-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .calendar-table th {
+      background: #2d5016;
+      color: white;
+      padding: 12px 5px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 12px;
+      border-right: 1px solid #1a3009;
+      white-space: nowrap;
+    }
+
+    .calendar-table th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 20;
+      min-width: 180px;
+      width: 180px;
+      background: #2d5016;
+    }
+
+    .calendar-table td {
+      padding: 0;
+      border: 1px solid #e0e0e0;
+      text-align: center;
+      vertical-align: middle;
+      height: 60px;
+    }
+
+    .calendar-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      background: #e8f5e9;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .room-header {
+      padding: 10px;
+      text-align: left;
+    }
+
+    .room-name {
+      font-weight: 600;
+      color: #2d5016;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .room-details {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .day-cell {
+      width: 45px;
+      height: 60px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .day-cell.available {
+      background: #c8e6c9;
+    }
+
+    .day-cell.booked {
+      background: #ffcdd2;
+    }
+
+    .day-cell.past {
+      background: #f5f5f5;
+      color: #999;
+      cursor: default;
+    }
+
+    .day-cell:hover:not(.past) {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+
+    .day-number {
+      font-size: 16px;
+      font-weight: 600;
+      padding: 5px;
+    }
+
+    .day-status {
+      font-size: 10px;
+      font-weight: 600;
+      padding-bottom: 5px;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 30px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .legend-available {
+      background: #c8e6c9;
+    }
+
+    .legend-booked {
+      background: #ffcdd2;
+    }
+
+    .legend-past {
+      background: #f5f5f5;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #2d5016;
+      font-size: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #2d5016;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 2000;
+      transform: translateX(400px);
+      transition: transform 0.3s;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.error {
+      background: #f44336;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      z-index: 1000;
+      pointer-events: none;
+      display: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .day-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.3;
+    }
+
+    .day-name {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .day-date {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .weekend {
+      background: #1a3009 !important;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .page-title {
+        font-size: 20px;
+      }
+      
+      .calendar-controls {
+        flex-direction: column;
+      }
+      
+      .calendar-controls h3 {
+        font-size: 18px;
+      }
+      
+      .month-nav button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      
+      .legend {
+        flex-direction: column;
+        gap: 10px;
+        font-size: 12px;
+      }
+
+      .calendar-table th:first-child,
+      .calendar-table td:first-child {
+        min-width: 120px;
+        width: 120px;
+      }
+
+      .room-name {
+        font-size: 12px;
+      }
+
+      .room-details {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>🌳 Terrain Vanabas</h1>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <!-- <a href="dashboard.html">Dashboard</a> -->
+      <a href="bookings.html">Bookings</a>
+      <a href="rooms.html">Rooms</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="page-title">📅 Room Availability Calendar</h2>
+
+    <div class="calendar-controls">
+      <h3 id="currentMonth"></h3>
+      <div class="month-nav">
+        <button onclick="previousMonth()">◀ Previous</button>
+        <button onclick="currentMonthView()">📅 Today</button>
+        <button onclick="nextMonth()">Next ▶</button>
+      </div>
+    </div>
+
+    <div id="loading" class="loading">Loading calendar...</div>
+
+    <div class="calendar-wrapper" id="calendarWrapper" style="display: none;">
+      <div class="calendar-scroll">
+        <table class="calendar-table" id="calendarTable"></table>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color legend-available"></div>
+          <span><strong>Available</strong></span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-booked"></div>
+          <span><strong>Booked</strong></span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-past"></div>
+          <span><strong>Past Date</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwzrgJH3ZdKYRhf24f2Bzt-m0INibANF8_TIia0AKyzI3Y4EenxmmA0rbfrMs7vQykO/exec';
+
+    let allRooms = [];
+    let allBookings = [];
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    // API Client
+    const API = {
+      async call(action, params = {}) {
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, ...params }),
+            headers: { 'Content-Type': 'text/plain' }
+          });
+          const data = await response.json();
+          if (!data.success && data.error) throw new Error(data.error);
+          return data;
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      },
+
+      async getRooms() {
+        const result = await this.call('getRooms');
+        return result.data || [];
+      },
+
+      async getBookings() {
+        const result = await this.call('getBookings');
+        return result.data || [];
+      }
+    };
+
+    // Load Data
+    async function loadCalendar() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('calendarWrapper').style.display = 'none';
+
+      try {
+        allRooms = await API.getRooms();
+        allBookings = await API.getBookings();
+        
+        if (allRooms.length === 0) {
+          showToast('No rooms found. Please add rooms first.', 'error');
+          return;
+        }
+
+        renderCalendar();
+        document.getElementById('calendarWrapper').style.display = 'block';
+      } catch (error) {
+        showToast('Failed to load calendar: ' + error.message, 'error');
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    // Render Calendar
+    function renderCalendar() {
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+
+      document.getElementById('currentMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const table = document.getElementById('calendarTable');
+      table.innerHTML = '';
+
+      // Create header row with dates
+      const headerRow = document.createElement('tr');
+      const roomHeaderCell = document.createElement('th');
+      roomHeaderCell.textContent = 'ROOM';
+      headerRow.appendChild(roomHeaderCell);
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentYear, currentMonth, day);
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+        
+        const th = document.createElement('th');
+        if (isWeekend) th.classList.add('weekend');
+        th.innerHTML = `
+          <div class="day-header">
+            <div class="day-name">${dayName}</div>
+            <div class="day-date">${day}</div>
+          </div>
+        `;
+        headerRow.appendChild(th);
+      }
+      table.appendChild(headerRow);
+
+      // Create row for each active room
+      const activeRooms = allRooms.filter(room => room.status === 'Active');
+      
+      activeRooms.forEach(room => {
+        const row = document.createElement('tr');
+        
+        const roomCell = document.createElement('td');
+        roomCell.innerHTML = `
+          <div class="room-header">
+            <div class="room-name">${room.room_name}</div>
+            <div class="room-details">${room.room_type} • ${room.capacity} guests</div>
+          </div>
+        `;
+        row.appendChild(roomCell);
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const date = new Date(currentYear, currentMonth, day);
+          const dateString = formatDateForAPI(date);
+          
+          const cell = document.createElement('td');
+          const cellDiv = document.createElement('div');
+          cellDiv.className = 'day-cell';
+
+          if (date < today) {
+            cellDiv.classList.add('past');
+          } else {
+            const bookingInfo = checkIfBooked(room.room_id, dateString);
+            
+            if (bookingInfo.isBooked) {
+              cellDiv.classList.add('booked');
+              cellDiv.onmouseover = function(e) {
+                showTooltip(e, `${bookingInfo.guestName}\n${bookingInfo.checkin} → ${bookingInfo.checkout}`);
+              };
+              cellDiv.onmouseout = hideTooltip;
+            } else {
+              cellDiv.classList.add('available');
+            }
+          }
+
+          cell.appendChild(cellDiv);
+          row.appendChild(cell);
+        }
+
+        table.appendChild(row);
+      });
+    }
+
+    // Check if room is booked
+    function checkIfBooked(roomId, dateString) {
+      const checkDate = new Date(dateString);
+      
+      for (let booking of allBookings) {
+        if (String(booking.room_id) !== String(roomId)) continue;
+        if (booking.status !== 'Confirmed' && booking.status !== 'Checked-in') continue;
+        
+        const checkin = new Date(booking.checkin_date);
+        const checkout = new Date(booking.checkout_date);
+        
+        if (checkDate >= checkin && checkDate < checkout) {
+          return {
+            isBooked: true,
+            guestName: booking.guest_name,
+            checkin: formatDate(booking.checkin_date),
+            checkout: formatDate(booking.checkout_date)
+          };
+        }
+      }
+      
+      return { isBooked: false };
+    }
+
+    // Format date for API
+    function formatDateForAPI(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    // Format date for display
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+    }
+
+    // Navigation
+    function previousMonth() {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+    }
+
+    function currentMonthView() {
+      const now = new Date();
+      currentMonth = now.getMonth();
+      currentYear = now.getFullYear();
+      renderCalendar();
+    }
+
+    // Tooltip
+    function showTooltip(e, text) {
+      const tooltip = document.getElementById('tooltip');
+      tooltip.textContent = text;
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.pageX + 10) + 'px';
+      tooltip.style.top = (e.pageY - 40) + 'px';
+    }
+
+    function hideTooltip() {
+      document.getElementById('tooltip').style.display = 'none';
+    }
+
+    // Show Toast
+    function showToast(message, type = 'error') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Initialize
+    window.onload = loadCalendar;
+  </script>
+</body>
+</html>

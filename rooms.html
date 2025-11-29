@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rooms - Terrain Vanabas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e8f5e9;
+    }
+
+    .topbar {
+      background: #2d5016;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+      background: #4caf50;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      color: #2d5016;
+      font-size: 32px;
+    }
+
+    .btn-primary {
+      background: #2d5016;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: #4caf50;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #2d5016;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tbody tr:hover {
+      background: #f5f5f5;
+    }
+
+    .status-badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    .status-maintenance {
+      background: #fff9c4;
+      color: #f57f17;
+    }
+
+    .status-inactive {
+      background: #e0e0e0;
+      color: #616161;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-edit {
+      background: #2196f3;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      background: #2d5016;
+      color: white;
+      padding: 20px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .modal-footer {
+      padding: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-secondary {
+      background: #9e9e9e;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #2d5016;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #666;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #2d5016;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 2000;
+      transform: translateX(400px);
+      transition: transform 0.3s;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      background: #4caf50;
+    }
+
+    .toast.error {
+      background: #f44336;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>🌳 Terrain Vanabas - Rooms</h1>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <!-- <a href="dashboard.html">Dashboard</a> -->
+      <a href="bookings.html">Bookings</a>
+      <a href="availability.html">Availability</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <h2 class="page-title">Room Management</h2>
+      <button class="btn-primary" onclick="openAddModal()">➕ Add Room</button>
+    </div>
+
+    <div id="loading" class="loading">Loading rooms...</div>
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <p>🏠 No rooms found</p>
+    </div>
+
+    <div class="table-container" id="tableContainer" style="display: none;">
+      <table>
+        <thead>
+          <tr>
+            <th>Room ID</th>
+            <th>Room Name</th>
+            <th>Type</th>
+            <th>Capacity</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="roomsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal" id="roomModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New Room</h3>
+        <button style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="roomForm" onsubmit="handleSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editRowIndex">
+          
+          <div class="form-group">
+            <label>Room ID *</label>
+            <input type="text" id="inputRoomId" required placeholder="e.g., 6">
+          </div>
+
+          <div class="form-group">
+            <label>Room Name *</label>
+            <input type="text" id="inputRoomName" required placeholder="e.g., Forest View Suite">
+          </div>
+
+          <div class="form-group">
+            <label>Room Type *</label>
+            <select id="inputRoomType" required>
+              <option value="AC">AC</option>
+              <option value="Non Ac">Non AC</option>
+              <option value="Deluxe">Deluxe</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Capacity (persons) *</label>
+            <input type="number" id="inputCapacity" min="1" max="10" required placeholder="e.g., 2">
+          </div>
+
+          <div class="form-group">
+            <label>Status *</label>
+            <select id="inputStatus" required>
+              <option value="Active">Active</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="submitBtn">Save Room</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwzrgJH3ZdKYRhf24f2Bzt-m0INibANF8_TIia0AKyzI3Y4EenxmmA0rbfrMs7vQykO/exec';
+    let allRooms = [];
+
+    // API Client
+    const API = {
+      async call(action, params = {}) {
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, ...params }),
+            headers: { 'Content-Type': 'text/plain' }
+          });
+          const data = await response.json();
+          if (!data.success && data.error) throw new Error(data.error);
+          return data;
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      },
+
+      async getRooms() {
+        const result = await this.call('getRooms');
+        return result.data || [];
+      },
+
+      async addRoom(data) {
+        return await this.call('addRoom', { data });
+      },
+
+      async updateRoom(rowIndex, data) {
+        return await this.call('updateRoom', { rowIndex, data });
+      },
+
+      async deleteRoom(rowIndex) {
+        return await this.call('deleteRoom', { rowIndex });
+      }
+    };
+
+    async function loadRooms() {
+      try {
+        allRooms = await API.getRooms();
+        displayRooms(allRooms);
+      } catch (error) {
+        showError(error);
+      }
+    }
+
+    function displayRooms(rooms) {
+      document.getElementById('loading').style.display = 'none';
+      
+      if (rooms.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('tableContainer').style.display = 'block';
+      const tbody = document.getElementById('roomsTableBody');
+      tbody.innerHTML = '';
+
+      rooms.forEach(room => {
+        const statusClass = `status-${room.status.toLowerCase()}`;
+        const row = `
+          <tr>
+            <td>${room.room_id}</td>
+            <td>${room.room_name}</td>
+            <td>${room.room_type}</td>
+            <td>${room.capacity}</td>
+            <td><span class="status-badge ${statusClass}">${room.status}</span></td>
+            <td class="action-btns">
+              <button class="btn-sm btn-edit" onclick="editRoom(${room.rowIndex})">✏️ Edit</button>
+              <button class="btn-sm btn-delete" onclick="deleteRoom(${room.rowIndex})">🗑️ Delete</button>
+            </td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function openAddModal() {
+      document.getElementById('modalTitle').textContent = 'Add New Room';
+      document.getElementById('roomForm').reset();
+      document.getElementById('editRowIndex').value = '';
+      document.getElementById('inputRoomId').disabled = false;
+      document.getElementById('roomModal').classList.add('show');
+    }
+
+    function editRoom(rowIndex) {
+      const room = allRooms.find(r => r.rowIndex === rowIndex);
+      if (!room) return;
+
+      document.getElementById('modalTitle').textContent = 'Edit Room';
+      document.getElementById('editRowIndex').value = rowIndex;
+      document.getElementById('inputRoomId').value = room.room_id;
+      document.getElementById('inputRoomId').disabled = true;
+      document.getElementById('inputRoomName').value = room.room_name;
+      document.getElementById('inputRoomType').value = room.room_type;
+      document.getElementById('inputCapacity').value = room.capacity;
+      document.getElementById('inputStatus').value = room.status;
+      
+      document.getElementById('roomModal').classList.add('show');
+    }
+
+    async function deleteRoom(rowIndex) {
+      if (!confirm('Are you sure you want to delete this room?')) return;
+
+      try {
+        const result = await API.deleteRoom(rowIndex);
+        showToast(result.message, 'success');
+        loadRooms();
+      } catch (error) {
+        showError(error);
+      }
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const formData = {
+        room_id: document.getElementById('inputRoomId').value,
+        room_name: document.getElementById('inputRoomName').value,
+        room_type: document.getElementById('inputRoomType').value,
+        capacity: parseInt(document.getElementById('inputCapacity').value),
+        status: document.getElementById('inputStatus').value
+      };
+
+      const rowIndex = document.getElementById('editRowIndex').value;
+
+      try {
+        let result;
+        if (rowIndex) {
+          result = await API.updateRoom(parseInt(rowIndex), formData);
+        } else {
+          result = await API.addRoom(formData);
+        }
+        
+        showToast(result.message, 'success');
+        closeModal();
+        loadRooms();
+      } catch (error) {
+        showError(error);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Room';
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('roomModal').classList.remove('show');
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function showError(error) {
+      showToast(error.message || 'An error occurred', 'error');
+    }
+
+    window.onload = loadRooms;
+  </script>
+</body>
+</html>

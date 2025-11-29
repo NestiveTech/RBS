@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookings - Terrain Vanabas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e8f5e9;
+    }
+
+    .topbar {
+      background: #2d5016;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+      background: #4caf50;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      color: #2d5016;
+      font-size: 32px;
+    }
+
+    .btn-primary {
+      background: #2d5016;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: #4caf50;
+    }
+
+    .filters-bar {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filters-bar input,
+    .filters-bar select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #2d5016;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tbody tr:hover {
+      background: #f5f5f5;
+    }
+
+    .status-badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-confirmed {
+      background: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    .status-checked-in,
+    .status-checkedin {
+      background: #bbdefb;
+      color: #1565c0;
+    }
+
+    .status-completed {
+      background: #e0e0e0;
+      color: #616161;
+    }
+
+    .status-cancelled {
+      background: #ffcdd2;
+      color: #c62828;
+    }
+
+    .booking-id {
+      font-family: 'Courier New', monospace;
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      color: #856404;
+      font-size: 11px;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #d32f2f;
+    }
+
+    .btn-checkin {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-checkin:hover {
+      background: #388e3c;
+    }
+
+    .btn-checkout {
+      background: #ff9800;
+      color: white;
+    }
+
+    .btn-checkout:hover {
+      background: #f57c00;
+    }
+
+    .btn-cancel {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-cancel:hover {
+      background: #d32f2f;
+    }
+
+    .btn-disabled {
+      background: #e0e0e0;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: 20px;
+    }
+
+    .modal-header {
+      background: #2d5016;
+      color: white;
+      padding: 20px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .rooms-selection {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      background: #f9f9f9;
+      margin-bottom: 20px;
+    }
+
+    .rooms-selection h4 {
+      color: #2d5016;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .room-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .room-checkbox:hover {
+      border-color: #4caf50;
+      background: #f5f5f5;
+    }
+
+    .room-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+
+    .room-checkbox label {
+      cursor: pointer;
+      margin: 0;
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .room-checkbox.checked {
+      border-color: #4caf50;
+      background: #e8f5e9;
+    }
+
+    .selected-count {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      color: #856404;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .info-box {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #4caf50;
+      margin-bottom: 20px;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: #2d5016;
+      font-weight: 600;
+    }
+
+    .info-box p:last-child {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #666;
+      font-weight: 400;
+    }
+
+    .modal-footer {
+      padding: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-secondary {
+      background: #9e9e9e;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #2d5016;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #666;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #2d5016;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 2000;
+      transform: translateX(400px);
+      transition: transform 0.3s;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      background: #4caf50;
+    }
+
+    .toast.error {
+      background: #f44336;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .filters-bar {
+        flex-direction: column;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>🌳 Terrain Vanabas - Bookings</h1>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="rooms.html">Rooms</a>
+      <a href="availability.html">Availability</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <h2 class="page-title">All Bookings</h2>
+      <button class="btn-primary" onclick="openAddModal()">➕ Add Booking</button>
+    </div>
+
+    <div class="filters-bar">
+      <input type="date" id="filterStartDate" placeholder="Start Date">
+      <input type="date" id="filterEndDate" placeholder="End Date">
+      <select id="filterStatus">
+        <option value="">All Status</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Checked-in">Checked-in</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <button class="btn-primary" onclick="applyFilters()">Apply Filters</button>
+      <button class="btn-secondary" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <div id="loading" class="loading">Loading bookings...</div>
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <p>📋 No bookings found</p>
+    </div>
+
+    <div class="table-container" id="tableContainer" style="display: none;">
+      <table>
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Room</th>
+            <th>Guest Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookingsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Booking Modal -->
+  <div class="modal" id="bookingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Booking</h3>
+        <button style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="bookingForm" onsubmit="handleSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Guest Name *</label>
+            <input type="text" id="inputGuestName" required placeholder="Full Name">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="inputEmail" required placeholder="guest@example.com">
+            </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" id="inputPhone" required placeholder="+91 1234567890">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>ID Card Number *</label>
+            <input type="text" id="inputIdCard" required placeholder="Aadhaar/Passport/License">
+          </div>
+
+          <div class="rooms-selection">
+            <h4>🏠 Select Rooms (Multiple Allowed) *</h4>
+            <div class="selected-count" id="selectedCount">No rooms selected</div>
+            <div id="roomsCheckboxContainer"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Check-in Date *</label>
+              <input type="date" id="inputCheckin" required>
+            </div>
+            <div class="form-group">
+              <label>Check-out Date *</label>
+              <input type="date" id="inputCheckout" required>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <p>📋 Booking Status: <span style="color: #4caf50;">Confirmed</span></p>
+            <p>All new bookings are automatically confirmed. Guest can check-in on the scheduled date.</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="submitBtn">Confirm Booking(s)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwzrgJH3ZdKYRhf24f2Bzt-m0INibANF8_TIia0AKyzI3Y4EenxmmA0rbfrMs7vQykO/exec';
+    
+    let allBookings = [];
+    let allRooms = [];
+    let selectedRooms = [];
+
+    // API Client
+    const API = {
+      async call(action, params = {}) {
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, ...params }),
+            headers: { 'Content-Type': 'text/plain' }
+          });
+          
+          if (!response.ok) throw new Error('Network error');
+          
+          const data = await response.json();
+          if (!data.success && data.error) throw new Error(data.error);
+          return data;
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      },
+
+      async getBookings() {
+        const result = await this.call('getBookings');
+        return result.data || [];
+      },
+
+      async addBooking(data) {
+        return await this.call('addBooking', { data });
+      },
+
+      async updateBooking(rowIndex, data) {
+        return await this.call('updateBooking', { rowIndex, data });
+      },
+
+      async deleteBooking(rowIndex) {
+        return await this.call('deleteBooking', { rowIndex });
+      },
+
+      async getRooms() {
+        const result = await this.call('getRooms');
+        return result.data || [];
+      }
+    };
+
+    // Format Date (FIXED - Safe Date Handling)
+    function formatDate(dateString) {
+      try {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        // Check if date is valid
+        if (isNaN(date.getTime())) return 'Invalid Date';
+        return date.toLocaleDateString('en-IN');
+      } catch (error) {
+        console.error('Date format error:', error);
+        return '';
+      }
+    }
+
+    // Get Action Buttons
+    function getActionButtons(booking) {
+      try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const checkinDate = new Date(booking.checkin_date);
+        checkinDate.setHours(0, 0, 0, 0);
+        
+        const checkoutDate = new Date(booking.checkout_date);
+        checkoutDate.setHours(0, 0, 0, 0);
+        
+        // Validate dates
+        if (isNaN(checkinDate.getTime()) || isNaN(checkoutDate.getTime())) {
+          return '<span style="color: #f44336; font-size: 12px;">Invalid Date</span>';
+        }
+        
+        const oneDayBeforeCheckin = new Date(checkinDate);
+        oneDayBeforeCheckin.setDate(oneDayBeforeCheckin.getDate() - 1);
+
+        let buttons = '';
+
+        // CONFIRMED Status
+        if (booking.status === 'Confirmed') {
+          if (today.getTime() === checkinDate.getTime()) {
+            buttons += `<button class="btn-sm btn-checkin" onclick="updateBookingStatus(${booking.rowIndex}, 'Checked-in')">✓ Check-in</button>`;
+          }
+          else if (today < oneDayBeforeCheckin) {
+            buttons += `<button class="btn-sm btn-cancel" onclick="cancelBooking(${booking.rowIndex})">✗ Cancel</button>`;
+          }
+          else if (today.getTime() === oneDayBeforeCheckin.getTime()) {
+            buttons += `<button class="btn-sm btn-disabled" disabled title="Cannot cancel within 1 day">✗ Too Late</button>`;
+          }
+          else if (today > checkinDate) {
+            buttons += `<button class="btn-sm btn-disabled" disabled title="Check-in date passed">⚠️ Overdue</button>`;
+          }
+        }
+
+        // CHECKED-IN Status
+        else if (booking.status === 'Checked-in') {
+          if (today.getTime() === checkoutDate.getTime()) {
+            buttons += `<button class="btn-sm btn-checkout" onclick="updateBookingStatus(${booking.rowIndex}, 'Completed')">✓ Check-out</button>`;
+          }
+          else if (today < checkoutDate) {
+            buttons += `<button class="btn-sm btn-disabled" disabled title="Check-out on ${formatDate(booking.checkout_date)}">🏠 Staying</button>`;
+          }
+          else if (today > checkoutDate) {
+            buttons += `<button class="btn-sm btn-disabled" disabled title="Check-out overdue">⚠️ Overdue</button>`;
+          }
+        }
+
+        // COMPLETED Status
+        else if (booking.status === 'Completed') {
+          buttons += `<button class="btn-sm btn-delete" onclick="deleteBooking(${booking.rowIndex})">🗑️ Delete</button>`;
+        }
+
+        // CANCELLED Status
+        else if (booking.status === 'Cancelled') {
+          buttons += `<button class="btn-sm btn-delete" onclick="deleteBooking(${booking.rowIndex})">🗑️ Delete</button>`;
+        }
+
+        return buttons || '<span style="color: #999; font-size: 12px;">-</span>';
+      } catch (error) {
+        console.error('Button generation error:', error);
+        return '<span style="color: #f44336; font-size: 12px;">Error</span>';
+      }
+    }
+
+    // Update Booking Status
+    async function updateBookingStatus(rowIndex, newStatus) {
+      const booking = allBookings.find(b => b.rowIndex === rowIndex);
+      if (!booking) return;
+
+      const statusText = newStatus === 'Checked-in' ? 'check in' : 'check out';
+      if (!confirm(`Confirm ${statusText} for ${booking.guest_name}?`)) return;
+
+      try {
+        const formData = {
+          room_id: booking.room_id,
+          guest_name: booking.guest_name,
+          email: booking.email,
+          phone: booking.phone,
+          id_card: booking.id_card,
+          checkin_date: booking.checkin_date,
+          checkout_date: booking.checkout_date,
+          status: newStatus
+        };
+
+        await API.updateBooking(rowIndex, formData);
+        showToast(`✅ Successfully ${statusText}ed ${booking.guest_name}!`, 'success');
+        loadBookings();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    // Cancel Booking
+    async function cancelBooking(rowIndex) {
+      const booking = allBookings.find(b => b.rowIndex === rowIndex);
+      if (!booking) return;
+
+      if (!confirm(`Cancel booking for ${booking.guest_name}?\nThis action cannot be undone.`)) return;
+
+      try {
+        const formData = {
+          room_id: booking.room_id,
+          guest_name: booking.guest_name,
+          email: booking.email,
+          phone: booking.phone,
+          id_card: booking.id_card,
+          checkin_date: booking.checkin_date,
+          checkout_date: booking.checkout_date,
+          status: 'Cancelled'
+        };
+
+        await API.updateBooking(rowIndex, formData);
+        showToast('❌ Booking cancelled successfully!', 'success');
+        loadBookings();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    // Delete Booking
+    async function deleteBooking(rowIndex) {
+      if (!confirm('Permanently delete this booking?')) return;
+
+      try {
+        await API.deleteBooking(rowIndex);
+        showToast('🗑️ Booking deleted!', 'success');
+        loadBookings();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    // Load Bookings
+    async function loadBookings() {
+      try {
+        allBookings = await API.getBookings();
+        displayBookings(allBookings);
+      } catch (error) {
+        document.getElementById('loading').innerHTML = '❌ Error: ' + error.message;
+      }
+    }
+
+    // Load Rooms
+    async function loadRooms() {
+      try {
+        allRooms = await API.getRooms();
+      } catch (error) {
+        showToast('Failed to load rooms', 'error');
+      }
+    }
+
+    // Populate Room Checkboxes
+    function populateRoomCheckboxes() {
+      const container = document.getElementById('roomsCheckboxContainer');
+      container.innerHTML = '';
+      
+      if (allRooms.length === 0) {
+        container.innerHTML = '<p style="color: #999; text-align: center;">No rooms available</p>';
+        return;
+      }
+      
+      allRooms.forEach(room => {
+        if (room.status === 'Active') {
+          const roomDiv = document.createElement('div');
+          roomDiv.className = 'room-checkbox';
+          roomDiv.id = `room-checkbox-${room.room_id}`;
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = `room-${room.room_id}`;
+          checkbox.value = room.room_id;
+          checkbox.onchange = updateSelectedRooms;
+          
+          const label = document.createElement('label');
+          label.htmlFor = `room-${room.room_id}`;
+          label.textContent = `${room.room_id} - ${room.room_name} (${room.room_type}, ${room.capacity} persons)`;
+          
+          roomDiv.appendChild(checkbox);
+          roomDiv.appendChild(label);
+          roomDiv.onclick = function(e) {
+            if (e.target.tagName !== 'INPUT') {
+              checkbox.checked = !checkbox.checked;
+              updateSelectedRooms();
+            }
+          };
+          
+          container.appendChild(roomDiv);
+        }
+      });
+    }
+
+    // Update Selected Rooms
+    function updateSelectedRooms() {
+      selectedRooms = [];
+      const checkboxes = document.querySelectorAll('#roomsCheckboxContainer input[type="checkbox"]');
+      
+      checkboxes.forEach(cb => {
+        const roomDiv = document.getElementById(`room-checkbox-${cb.value}`);
+        if (cb.checked) {
+          selectedRooms.push(cb.value);
+          roomDiv.classList.add('checked');
+        } else {
+          roomDiv.classList.remove('checked');
+        }
+      });
+      
+      const countDiv = document.getElementById('selectedCount');
+      if (selectedRooms.length === 0) {
+        countDiv.textContent = 'No rooms selected';
+      } else if (selectedRooms.length === 1) {
+        countDiv.textContent = '1 room selected';
+      } else {
+        countDiv.textContent = `${selectedRooms.length} rooms selected`;
+      }
+    }
+
+    // Display Bookings
+    function displayBookings(bookings) {
+      document.getElementById('loading').style.display = 'none';
+      
+      if (bookings.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('tableContainer').style.display = 'block';
+      const tbody = document.getElementById('bookingsTableBody');
+      tbody.innerHTML = '';
+
+      bookings.forEach(booking => {
+        const statusClass = `status-${booking.status.toLowerCase().replace(/[^a-z]/g, '')}`;
+        const actionButtons = getActionButtons(booking);
+        
+        const row = `
+          <tr>
+            <td><span class="booking-id">${booking.booking_id || 'N/A'}</span></td>
+            <td>${booking.room_id || '-'}</td>
+            <td>${booking.guest_name || '-'}</td>
+            <td>${booking.email || '-'}</td>
+            <td>${booking.phone || '-'}</td>
+            <td>${formatDate(booking.checkin_date)}</td>
+            <td>${formatDate(booking.checkout_date)}</td>
+            <td><span class="status-badge ${statusClass}">${booking.status || '-'}</span></td>
+            <td class="action-btns">${actionButtons}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    // Open Add Modal
+    function openAddModal() {
+      if (allRooms.length === 0) {
+        showToast('Loading rooms...', 'error');
+        loadRooms().then(() => {
+          if (allRooms.length > 0) openAddModalAfterRoomsLoaded();
+        });
+        return;
+      }
+      openAddModalAfterRoomsLoaded();
+    }
+
+    function openAddModalAfterRoomsLoaded() {
+      document.getElementById('bookingForm').reset();
+      selectedRooms = [];
+      
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('inputCheckin').setAttribute('min', today);
+      document.getElementById('inputCheckout').setAttribute('min', today);
+      
+      populateRoomCheckboxes();
+      updateSelectedRooms();
+      document.getElementById('bookingModal').classList.add('show');
+    }
+
+    // Handle Form Submit
+    async function handleSubmit(e) {
+      e.preventDefault();
+      
+      if (selectedRooms.length === 0) {
+        showToast('Please select at least one room', 'error');
+        return;
+      }
+
+      const checkin = document.getElementById('inputCheckin').value;
+      const checkout = document.getElementById('inputCheckout').value;
+      
+      if (new Date(checkout) <= new Date(checkin)) {
+        showToast('Check-out must be after check-in date', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating bookings...';
+
+      const baseData = {
+        guest_name: document.getElementById('inputGuestName').value,
+        email: document.getElementById('inputEmail').value,
+        phone: document.getElementById('inputPhone').value,
+        id_card: document.getElementById('inputIdCard').value,
+        checkin_date: checkin,
+        checkout_date: checkout,
+        status: 'Confirmed'
+      };
+
+      try {
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const roomId of selectedRooms) {
+          try {
+            const formData = { ...baseData, room_id: roomId };
+            await API.addBooking(formData);
+            successCount++;
+          } catch (error) {
+            console.error(`Failed room ${roomId}:`, error);
+            failCount++;
+          }
+        }
+        
+        if (successCount > 0) {
+          showToast(`✅ ${successCount} booking(s) confirmed!`, 'success');
+          closeModal();
+          loadBookings();
+        } else {
+          showToast('❌ All bookings failed', 'error');
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirm Booking(s)';
+      }
+    }
+
+    // Close Modal
+    function closeModal() {
+      document.getElementById('bookingModal').classList.remove('show');
+    }
+
+    // Apply Filters
+    function applyFilters() {
+      const startDate = document.getElementById('filterStartDate').value;
+      const endDate = document.getElementById('filterEndDate').value;
+      const status = document.getElementById('filterStatus').value;
+
+      const rows = document.querySelectorAll('#bookingsTableBody tr');
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        const checkinText = cells[5].textContent;
+        const rowStatus = cells[7].textContent.trim();
+
+        let show = true;
+        
+        if (startDate || endDate) {
+          const checkinDate = new Date(checkinText);
+          if (!isNaN(checkinDate.getTime())) {
+            if (startDate && checkinDate < new Date(startDate)) show = false;
+            if (endDate && checkinDate > new Date(endDate)) show = false;
+          }
+        }
+        
+        if (status && rowStatus !== status) show = false;
+
+        row.style.display = show ? '' : 'none';
+      });
+    }
+
+    // Clear Filters
+    function clearFilters() {
+      document.getElementById('filterStartDate').value = '';
+      document.getElementById('filterEndDate').value = '';
+      document.getElementById('filterStatus').value = '';
+      document.querySelectorAll('#bookingsTableBody tr').forEach(row => {
+        row.style.display = '';
+      });
+    }
+
+    // Show Toast
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Initialize
+    window.onload = function() {
+      console.log('Initializing Terrain Vanabas Booking System...');
+      loadRooms().then(() => {
+        loadBookings();
+      }).catch(error => {
+        console.error('Initialization error:', error);
+        showToast('Failed to initialize system', 'error');
+      });
+    };
+  </script>
+</body>
+</html>
