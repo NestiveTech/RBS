@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terrain Vanabas - Booking System</title>
+  <title>Dashboard - Terrain Vanabas</title>
   <style>
     * {
       margin: 0;
@@ -13,617 +13,518 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1a3009 0%, #2d5016 50%, #4caf50 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
+      background: #e8f5e9;
     }
 
-    /* Hero Section */
-    .hero {
-      position: relative;
-      height: 65vh;
-      background: url('assets/images/hero-bg.jpg') center/cover no-repeat;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(29, 48, 9, 0.8), rgba(45, 80, 22, 0.6));
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      padding: 30px;
-      animation: fadeInUp 1s ease-out;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .logo {
-      font-size: 80px;
-      margin-bottom: 15px;
-      animation: float 3s ease-in-out infinite;
-      filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(5deg); }
-    }
-
-    .hero h1 {
-      font-size: 64px;
-      margin-bottom: 20px;
-      text-shadow: 3px 3px 8px rgba(0,0,0,0.7);
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
-
-    .hero p {
-      font-size: 26px;
-      margin-bottom: 35px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-      opacity: 0.95;
-      font-weight: 300;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .hero-btn {
-      padding: 16px 40px;
+    .topbar {
       background: #2d5016;
       color: white;
-      text-decoration: none;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 600;
-      transition: all 0.4s ease;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-      border: 2px solid transparent;
-    }
-
-    .hero-btn:hover {
-      background: #4caf50;
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 10px 30px rgba(76,175,80,0.4);
-      border-color: white;
-    }
-
-    .hero-btn.secondary {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(15px);
-      border: 2px solid rgba(255,255,255,0.3);
-    }
-
-    .hero-btn.secondary:hover {
-      background: rgba(255,255,255,0.25);
-      border-color: white;
-    }
-
-    /* Main Container */
-    .container {
-      max-width: 1500px;
-      margin: -80px auto 60px;
-      padding: 0 20px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .section-title {
-      text-align: center;
-      color: white;
-      font-size: 48px;
-      margin-bottom: 60px;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
-      font-weight: 700;
-    }
-
-    /* Feature Cards Grid */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 35px;
-      margin-bottom: 70px;
-    }
-
-    .feature-card {
-      background: white;
-      border-radius: 25px;
-      overflow: hidden;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-      transition: all 0.4s ease;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
+      padding: 15px 30px;
       display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, transparent, rgba(76,175,80,0.1));
-      opacity: 0;
-      transition: opacity 0.4s;
-      z-index: 1;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-15px) rotate(-1deg);
-      box-shadow: 0 25px 60px rgba(76,175,80,0.4);
-    }
-
-    .feature-card:hover::before {
-      opacity: 1;
-    }
-
-    .card-image {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
-      transition: transform 0.4s;
-    }
-
-    .feature-card:hover .card-image {
-      transform: scale(1.1);
-    }
-
-    .card-content {
-      padding: 35px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      z-index: 2;
-    }
-
-    .card-icon {
-      font-size: 56px;
-      margin-bottom: 18px;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-    }
-
-    .card-title {
-      color: #2d5016;
-      font-size: 28px;
-      margin-bottom: 18px;
-      font-weight: 800;
-    }
-
-    .card-description {
-      color: #666;
-      line-height: 1.7;
-      margin-bottom: 28px;
-      flex: 1;
-      font-size: 15px;
-    }
-
-    .card-button {
-      display: inline-flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #2d5016, #4caf50);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
       color: white;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-weight: 700;
-      transition: all 0.3s;
       text-decoration: none;
-      align-self: flex-start;
-      box-shadow: 0 4px 15px rgba(45,80,22,0.3);
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background 0.3s;
     }
 
-    .card-button:hover {
-      background: linear-gradient(135deg, #4caf50, #66bb6a);
-      transform: translateX(5px);
-      box-shadow: 0 6px 20px rgba(76,175,80,0.4);
+    .nav-links a:hover {
+      background: #4caf50;
     }
 
-    /* Info Section */
-    .info-section {
-      background: rgba(255,255,255,0.98);
-      border-radius: 25px;
-      padding: 60px 50px;
-      margin-bottom: 60px;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
 
-    .info-section h2 {
+    .page-header {
+      margin-bottom: 30px;
       text-align: center;
+    }
+
+    .page-title {
       color: #2d5016;
-      font-size: 42px;
-      margin-bottom: 25px;
-      font-weight: 800;
+      font-size: 36px;
+      margin-bottom: 10px;
     }
 
-    .info-section > p {
-      text-align: center;
+    .page-subtitle {
       color: #666;
-      font-size: 19px;
-      line-height: 1.9;
-      max-width: 950px;
-      margin: 0 auto 50px;
+      font-size: 16px;
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 45px;
-      margin-top: 35px;
-    }
-
-    .info-item {
-      text-align: center;
-      padding: 30px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #f8f9fa, #ffffff);
-      transition: all 0.3s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
-
-    .info-item:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(45,80,22,0.15);
-    }
-
-    .info-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
-    }
-
-    .info-title {
-      color: #2d5016;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .info-text {
-      color: #666;
-      line-height: 1.7;
-      font-size: 15px;
-    }
-
-    /* Gallery Section */
-    .gallery {
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 25px;
-      margin: 60px 0;
+      margin-bottom: 40px;
     }
 
-    .gallery-item {
-      height: 240px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: all 0.4s;
-      cursor: pointer;
+    .stat-card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
       position: relative;
+      overflow: hidden;
     }
 
-    .gallery-item::after {
-      content: '🔍 View';
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .stat-card::before {
+      content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(45,80,22,0.9);
-      color: white;
-      padding: 12px 25px;
-      border-radius: 25px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-weight: 600;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #2d5016, #4caf50);
     }
 
-    .gallery-item:hover::after {
-      opacity: 1;
+    .stat-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
     }
 
-    .gallery-item:hover {
-      transform: scale(1.08) rotate(2deg);
-      box-shadow: 0 20px 40px rgba(76,175,80,0.4);
-    }
-
-    .gallery-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s;
-    }
-
-    .gallery-item:hover .gallery-img {
-      transform: scale(1.2);
-    }
-
-    /* Footer */
-    .footer {
-      background: rgba(255,255,255,0.98);
-      border-radius: 25px;
-      padding: 50px;
-      text-align: center;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-    }
-
-    .footer-content {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .footer h3 {
-      color: #2d5016;
-      font-size: 36px;
-      margin-bottom: 25px;
+    .stat-value {
+      font-size: 42px;
       font-weight: 800;
+      color: #2d5016;
+      margin-bottom: 8px;
+      line-height: 1;
     }
 
-    .footer-info {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      margin-bottom: 35px;
+    .stat-label {
+      font-size: 16px;
+      color: #666;
+      font-weight: 500;
     }
 
-    .footer-item {
+    .occupancy-card {
+      background: white;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+
+    .occupancy-card h3 {
+      color: #2d5016;
+      font-size: 24px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .occupancy-bar-container {
+      position: relative;
+      width: 100%;
+      height: 60px;
+      background: #e0e0e0;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .occupancy-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #2d5016, #4caf50);
+      border-radius: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      color: #666;
-      font-size: 17px;
-      line-height: 1.6;
+      transition: width 1s ease;
+      position: relative;
     }
 
-    .footer-item strong {
+    .occupancy-percentage {
+      color: white;
+      font-size: 24px;
+      font-weight: 800;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      z-index: 1;
+    }
+
+    .occupancy-details {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 10px;
+    }
+
+    .occupancy-detail {
+      text-align: center;
+    }
+
+    .occupancy-detail-value {
+      font-size: 28px;
+      font-weight: 700;
       color: #2d5016;
     }
 
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 25px;
-      margin-top: 35px;
+    .occupancy-detail-label {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
     }
 
-    .social-link {
+    .quick-actions {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .quick-actions h3 {
+      color: #2d5016;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #2d5016, #4caf50);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 3px 10px rgba(45,80,22,0.3);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(76,175,80,0.4);
+    }
+
+    .action-btn-icon {
+      font-size: 24px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 100px 20px;
+      color: #2d5016;
+      font-size: 18px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 5px solid #e0e0e0;
+      border-top-color: #2d5016;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: #ffcdd2;
+      color: #c62828;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .refresh-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
       width: 60px;
       height: 60px;
       background: linear-gradient(135deg, #2d5016, #4caf50);
       color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: none;
       border-radius: 50%;
-      font-size: 28px;
-      transition: all 0.4s;
-      text-decoration: none;
-      box-shadow: 0 5px 15px rgba(45,80,22,0.3);
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+      z-index: 100;
     }
 
-    .social-link:hover {
-      background: linear-gradient(135deg, #4caf50, #66bb6a);
-      transform: scale(1.2) rotate(10deg);
-      box-shadow: 0 10px 25px rgba(76,175,80,0.5);
+    .refresh-btn:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: 0 6px 20px rgba(76,175,80,0.5);
     }
 
-    .copyright {
-      margin-top: 35px;
-      padding-top: 25px;
-      border-top: 2px solid #e0e0e0;
+    .last-updated {
+      text-align: center;
       color: #999;
-      font-size: 15px;
+      font-size: 13px;
+      margin-top: 20px;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 38px;
+      .nav-links {
+        display: none;
       }
       
-      .hero p {
-        font-size: 19px;
+      .page-title {
+        font-size: 28px;
       }
       
-      .section-title {
-        font-size: 34px;
-      }
-      
-      .cards-grid {
+      .stats-grid {
         grid-template-columns: 1fr;
       }
       
-      .info-section {
-        padding: 40px 25px;
+      .stat-value {
+        font-size: 36px;
       }
-
-      .footer {
-        padding: 35px 25px;
+      
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      .occupancy-details {
+        flex-direction: column;
+        gap: 15px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Hero Section -->
-  <div class="hero">
-    <div class="hero-content">
-      <div class="logo">🌳</div>
-      <h1>Terrain Vanabas</h1>
-      <p>Your Premium Forest Escape in Rajabhatkhawa</p>
-      <div class="hero-buttons">
-        <a href="bookings.html" class="hero-btn">📅 Make a Booking</a>
-        <a href="availability.html" class="hero-btn secondary">🔍 Check Availability</a>
-      </div>
+  <div class="topbar">
+    <h1>🌳 Terrain Vanabas</h1>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="bookings.html">Bookings</a>
+      <a href="rooms.html">Rooms</a>
+      <a href="availability.html">Availability</a>
     </div>
   </div>
 
-  <!-- Main Container -->
   <div class="container">
-    <h2 class="section-title">Management Dashboard</h2>
-
-    <!-- Feature Cards -->
-    <div class="cards-grid">
-      <a href="dashboard.html" class="feature-card">
-        <img src="assets/images/dashboard.jpg" alt="Dashboard" class="card-image" onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
-        <div class="card-content">
-          <div class="card-icon">📊</div>
-          <h3 class="card-title">Dashboard</h3>
-          <p class="card-description">View real-time statistics, occupancy rates, today's check-ins and check-outs. Monitor your business performance at a glance.</p>
-          <span class="card-button">Open Dashboard →</span>
-        </div>
-      </a>
-
-      <a href="bookings.html" class="feature-card">
-        <img src="assets/images/bookings.jpg" alt="Bookings" class="card-image" onerror="this.style.background='linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'">
-        <div class="card-content">
-          <div class="card-icon">📅</div>
-          <h3 class="card-title">Bookings</h3>
-          <p class="card-description">Manage all guest reservations, create multiple bookings at once, edit details, and track booking status efficiently.</p>
-          <span class="card-button">Manage Bookings →</span>
-        </div>
-      </a>
-
-      <a href="rooms.html" class="feature-card">
-        <img src="assets/images/rooms.jpg" alt="Rooms" class="card-image" onerror="this.style.background='linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'">
-        <div class="card-content">
-          <div class="card-icon">🏠</div>
-          <h3 class="card-title">Room Management</h3>
-          <p class="card-description">View and manage your entire room inventory, add new rooms, update details, and set availability status.</p>
-          <span class="card-button">Manage Rooms →</span>
-        </div>
-      </a>
-
-      <a href="availability.html" class="feature-card">
-        <img src="assets/images/calendar.jpg" alt="Availability" class="card-image" onerror="this.style.background='linear-gradient(135deg, #fa709a 0%, #fee140 100%)'">
-        <div class="card-content">
-          <div class="card-icon">📆</div>
-          <h3 class="card-title">Availability Calendar</h3>
-          <p class="card-description">View all rooms availability in an interactive calendar format. Check dates and plan bookings efficiently.</p>
-          <span class="card-button">View Calendar →</span>
-        </div>
-      </a>
+    <div class="page-header">
+      <h2 class="page-title">Dashboard</h2>
+      <p class="page-subtitle" id="currentDate"></p>
     </div>
 
-    <!-- Info Section -->
-    <div class="info-section">
-      <h2>About Terrain Vanabas</h2>
-      <p>
-        Nestled in the pristine heart of Rajabhatkhawa, alongside the majestic Buxa Tiger Reserve and the serene Jayanti River, 
-        Terrain Vanabas offers an unparalleled forest retreat experience with luxurious comfort and genuine hospitality.
-      </p>
-      
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-icon">🏞️</div>
-          <h3 class="info-title">Prime Location</h3>
-          <p class="info-text">Panijhora, Rajabhatkhawa<br>Near Buxa Tiger Reserve<br>Alipurduar, West Bengal 735227</p>
-        </div>
-
-        <div class="info-item">
-          <div class="info-icon">📞</div>
-          <h3 class="info-title">Contact Us</h3>
-          <p class="info-text">Phone: +91 8637333961<br>Email: cafeterrainofficial@gmail.com</p>
-        </div>
-
-        <div class="info-item">
-          <div class="info-icon">🏠</div>
-          <h3 class="info-title">Our Rooms</h3>
-          <p class="info-text">Deluxe AC Rooms<br>Premium Suites<br>Standard Comfort Rooms</p>
-        </div>
-
-        <div class="info-item">
-          <div class="info-icon">✨</div>
-          <h3 class="info-title">Amenities</h3>
-          <p class="info-text">Breathtaking Forest Views<br>Authentic Local Cuisine<br>Guided Nature Trails</p>
-        </div>
-      </div>
+    <div id="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading dashboard statistics...</p>
     </div>
 
-    <!-- Gallery -->
-    <h2 class="section-title">Experience the Forest</h2>
-    <div class="gallery">
-      <div class="gallery-item">
-        <img src="assets/images/forest-view.jpg" alt="Forest View" class="gallery-img" onerror="this.style.background='linear-gradient(135deg, #134E5E, #71B280)'">
-      </div>
-      <div class="gallery-item">
-        <img src="assets/images/hero-bg.jpg" alt="Nature" class="gallery-img" onerror="this.style.background='linear-gradient(135deg, #0F2027, #2C5364)'">
-      </div>
-      <div class="gallery-item">
-        <img src="assets/images/rooms.jpg" alt="Room Interior" class="gallery-img" onerror="this.style.background='linear-gradient(135deg, #614385, #516395)'">
-      </div>
-      <div class="gallery-item">
-        <img src="assets/images/dashboard.jpg" alt="Sunset View" class="gallery-img" onerror="this.style.background='linear-gradient(135deg, #FC466B, #3F5EFB)'">
-      </div>
-    </div>
+    <div id="errorMessage" style="display: none;"></div>
 
-    <!-- Footer -->
-    <div class="footer">
-      <div class="footer-content">
-        <h3>🌳 Terrain Vanabas</h3>
-        <div class="footer-info">
-          <div class="footer-item">
-            <span>📍</span>
-            <span>Panijhora, Rajabhatkhawa, Alipurduar, West Bengal 735227</span>
-          </div>
-          <div class="footer-item">
-            <span>📞</span>
-            <span><strong>+91 8637333961</strong></span>
-          </div>
-          <div class="footer-item">
-            <span>📧</span>
-            <span>cafeterrainofficial@gmail.com</span>
-          </div>
-          <div class="footer-item">
-            <span>🕐</span>
-            <span><strong>Check-in:</strong> 12:00 PM | <strong>Check-out:</strong> 11:00 AM</span>
-          </div>
+    <div id="dashboardContent" style="display: none;">
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-value" id="todayBookings">0</div>
+          <div class="stat-label">Today's Bookings</div>
         </div>
 
-        <div class="social-links">
-          <a href="#" class="social-link" title="Facebook">📘</a>
-          <a href="#" class="social-link" title="Instagram">📷</a>
-          <a href="https://wa.me/918637333961" class="social-link" title="WhatsApp">💬</a>
-          <a href="mailto:cafeterrainofficial@gmail.com" class="social-link" title="Email">📧</a>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="todayCheckins">0</div>
+          <div class="stat-label">Today's Check-ins</div>
         </div>
 
-        <div class="copyright">
-          © 2025 Terrain Vanabas. All rights reserved. | Your Premium Forest Escape Awaits
+        <div class="stat-card">
+          <div class="stat-icon">🚪</div>
+          <div class="stat-value" id="todayCheckouts">0</div>
+          <div class="stat-label">Today's Check-outs</div>
         </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🏠</div>
+          <div class="stat-value" id="totalRooms">0</div>
+          <div class="stat-label">Total Rooms</div>
+        </div>
+      </div>
+
+      <!-- Occupancy Rate -->
+      <div class="occupancy-card">
+        <h3>📊 Current Occupancy Rate</h3>
+        <div class="occupancy-bar-container">
+          <div class="occupancy-bar" id="occupancyBar" style="width: 0%;">
+            <span class="occupancy-percentage" id="occupancyPercentage">0%</span>
+          </div>
+        </div>
+        <div class="occupancy-details">
+          <div class="occupancy-detail">
+            <div class="occupancy-detail-value" id="occupiedRooms">0</div>
+            <div class="occupancy-detail-label">Occupied Rooms</div>
+          </div>
+          <div class="occupancy-detail">
+            <div class="occupancy-detail-value" id="availableRooms">0</div>
+            <div class="occupancy-detail-label">Available Rooms</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h3>⚡ Quick Actions</h3>
+        <div class="action-buttons">
+          <a href="bookings.html" class="action-btn">
+            <span class="action-btn-icon">➕</span>
+            <span>New Booking</span>
+          </a>
+          <a href="bookings.html" class="action-btn">
+            <span class="action-btn-icon">📋</span>
+            <span>View Bookings</span>
+          </a>
+          <a href="rooms.html" class="action-btn">
+            <span class="action-btn-icon">🏠</span>
+            <span>Manage Rooms</span>
+          </a>
+          <a href="availability.html" class="action-btn">
+            <span class="action-btn-icon">📆</span>
+            <span>Check Availability</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="last-updated">
+        Last updated: <span id="lastUpdated"></span>
       </div>
     </div>
   </div>
+
+  <button class="refresh-btn" onclick="loadDashboard()" title="Refresh Dashboard">🔄</button>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwzrgJH3ZdKYRhf24f2Bzt-m0INibANF8_TIia0AKyzI3Y4EenxmmA0rbfrMs7vQykO/exec';
+
+    // API Client
+    const API = {
+      async call(action, params = {}) {
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, ...params }),
+            headers: { 'Content-Type': 'text/plain' }
+          });
+          
+          if (!response.ok) throw new Error('Network error');
+          
+          const data = await response.json();
+          if (!data.success && data.error) throw new Error(data.error);
+          return data;
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      },
+
+      async getDashboardStats() {
+        const result = await this.call('getDashboardStats');
+        return result.data || {};
+      }
+    };
+
+    // Load Dashboard Statistics
+    async function loadDashboard() {
+      try {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'none';
+
+        const stats = await API.getDashboardStats();
+
+        // Update statistics
+        document.getElementById('todayBookings').textContent = stats.todayBookings || 0;
+        document.getElementById('todayCheckins').textContent = stats.todayCheckins || 0;
+        document.getElementById('todayCheckouts').textContent = stats.todayCheckouts || 0;
+        document.getElementById('totalRooms').textContent = stats.totalRooms || 0;
+
+        // Calculate occupied and available rooms
+        const occupancyRate = stats.occupancyRate || 0;
+        const totalRooms = stats.totalRooms || 0;
+        const occupiedRooms = Math.round((occupancyRate / 100) * totalRooms);
+        const availableRooms = totalRooms - occupiedRooms;
+
+        // Update occupancy
+        document.getElementById('occupancyPercentage').textContent = occupancyRate + '%';
+        document.getElementById('occupancyBar').style.width = occupancyRate + '%';
+        document.getElementById('occupiedRooms').textContent = occupiedRooms;
+        document.getElementById('availableRooms').textContent = availableRooms;
+
+        // Update last updated time
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleString('en-IN');
+
+        // Show dashboard
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'block';
+
+      } catch (error) {
+        console.error('Dashboard Error:', error);
+        document.getElementById('loading').style.display = 'none';
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+          <strong>❌ Error Loading Dashboard</strong><br>
+          ${error.message}<br>
+          <button onclick="loadDashboard()" style="margin-top: 15px; padding: 10px 20px; background: #2d5016; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            🔄 Retry
+          </button>
+        `;
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    // Update Current Date
+    function updateCurrentDate() {
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      const today = new Date().toLocaleDateString('en-IN', options);
+      document.getElementById('currentDate').textContent = today;
+    }
+
+    // Initialize Dashboard
+    window.onload = function() {
+      console.log('Initializing Terrain Vanabas Dashboard...');
+      updateCurrentDate();
+      loadDashboard();
+
+      // Auto-refresh every 5 minutes
+      setInterval(loadDashboard, 5 * 60 * 1000);
+    };
+  </script>
 </body>
 </html>
