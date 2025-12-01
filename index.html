@@ -3,528 +3,242 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Terrain Vanabas</title>
+  <title>Login - Terrain Vanabas Booking System</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #e8f5e9;
+      background: linear-gradient(135deg, #2d5016 0%, #4a7c2b 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
-
-    .topbar {
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 420px;
+      animation: slideUp 0.5s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .logo { text-align: center; margin-bottom: 35px; }
+    .logo-icon { font-size: 48px; margin-bottom: 10px; }
+    .logo h1 { color: #2d5016; font-size: 28px; margin-bottom: 8px; font-weight: 700; }
+    .logo p { color: #666; font-size: 14px; }
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 14px; }
+    .input-wrapper { position: relative; }
+    .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 18px; }
+    .form-group input {
+      width: 100%;
+      padding: 14px 15px 14px 45px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s;
+      background: #fafafa;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #2d5016;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+    }
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .remember-me input {
+      margin-right: 8px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .btn {
+      width: 100%;
+      padding: 15px;
       background: #2d5016;
       color: white;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .topbar h1 {
-      font-size: 24px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 20px;
-    }
-
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 5px;
-      transition: background 0.3s;
-    }
-
-    .nav-links a:hover {
-      background: #4caf50;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    .page-header {
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .page-title {
-      color: #2d5016;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-
-    .page-subtitle {
-      color: #666;
-      font-size: 16px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      margin-bottom: 40px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, #2d5016, #4caf50);
-    }
-
-    .stat-icon {
-      font-size: 48px;
-      margin-bottom: 15px;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
-    }
-
-    .stat-value {
-      font-size: 42px;
-      font-weight: 800;
-      color: #2d5016;
-      margin-bottom: 8px;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 16px;
-      color: #666;
-      font-weight: 500;
-    }
-
-    .occupancy-card {
-      background: white;
-      padding: 35px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      margin-bottom: 40px;
-    }
-
-    .occupancy-card h3 {
-      color: #2d5016;
-      font-size: 24px;
-      margin-bottom: 25px;
-      text-align: center;
-    }
-
-    .occupancy-bar-container {
-      position: relative;
-      width: 100%;
-      height: 60px;
-      background: #e0e0e0;
-      border-radius: 30px;
-      overflow: hidden;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .occupancy-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #2d5016, #4caf50);
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: width 1s ease;
-      position: relative;
-    }
-
-    .occupancy-percentage {
-      color: white;
-      font-size: 24px;
-      font-weight: 800;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-      z-index: 1;
-    }
-
-    .occupancy-details {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-      padding: 15px;
-      background: #f5f5f5;
-      border-radius: 10px;
-    }
-
-    .occupancy-detail {
-      text-align: center;
-    }
-
-    .occupancy-detail-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #2d5016;
-    }
-
-    .occupancy-detail-label {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-    }
-
-    .quick-actions {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .quick-actions h3 {
-      color: #2d5016;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    .action-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
-    .action-btn {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 15px 20px;
-      background: linear-gradient(135deg, #2d5016, #4caf50);
-      color: white;
-      text-decoration: none;
+      border: none;
       border-radius: 10px;
       font-size: 16px;
       font-weight: 600;
+      cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 3px 10px rgba(45,80,22,0.3);
+      margin-top: 10px;
     }
-
-    .action-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(76,175,80,0.4);
+    .btn:hover { background: #4a7c2b; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+    .alert {
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+      animation: fadeIn 0.3s ease;
     }
-
-    .action-btn-icon {
-      font-size: 24px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 100px 20px;
-      color: #2d5016;
-      font-size: 18px;
-    }
-
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .alert-error { background: #fee; color: #c33; border: 1px solid #fcc; }
+    .alert-success { background: #efe; color: #2d5016; border: 1px solid #cfc; }
     .loading-spinner {
       display: inline-block;
-      width: 50px;
-      height: 50px;
-      border: 5px solid #e0e0e0;
-      border-top-color: #2d5016;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .error-message {
-      background: #ffcdd2;
-      color: #c62828;
-      padding: 20px;
-      border-radius: 10px;
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .footer-text { text-align: center; margin-top: 25px; color: #666; font-size: 13px; }
+    .session-info {
       text-align: center;
-      margin: 20px 0;
+      margin-top: 15px;
+      padding: 10px;
+      background: #e8f5e9;
+      border-radius: 5px;
+      font-size: 12px;
+      color: #2d5016;
     }
-
-    .refresh-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #2d5016, #4caf50);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      transition: all 0.3s;
-      z-index: 100;
-    }
-
-    .refresh-btn:hover {
-      transform: scale(1.1) rotate(180deg);
-      box-shadow: 0 6px 20px rgba(76,175,80,0.5);
-    }
-
-    .last-updated {
-      text-align: center;
-      color: #999;
-      font-size: 13px;
-      margin-top: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-      
-      .page-title {
-        font-size: 28px;
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .stat-value {
-        font-size: 36px;
-      }
-      
-      .action-buttons {
-        grid-template-columns: 1fr;
-      }
-      
-      .occupancy-details {
-        flex-direction: column;
-        gap: 15px;
-      }
-    }
+    .version { text-align: center; margin-top: 15px; color: #999; font-size: 12px; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <h1>🌳 Terrain Vanabas</h1>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="bookings.html">Bookings</a>
-      <a href="rooms.html">Rooms</a>
-      <a href="availability.html">Availability</a>
+  <div class="login-container">
+    <div class="logo">
+      <div class="logo-icon">🌳</div>
+      <h1>Terrain Vanabas</h1>
+      <p>Booking Management System</p>
     </div>
+    <div id="alertBox" class="alert"></div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📧</span>
+          <input type="email" id="email" required placeholder="Enter your email" autocomplete="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" required placeholder="Enter your password" autocomplete="current-password">
+        </div>
+      </div>
+      <div class="remember-me">
+        <input type="checkbox" id="rememberMe" checked>
+        <label for="rememberMe" style="margin: 0; font-weight: normal; cursor: pointer;">Keep me logged in</label>
+      </div>
+      <button type="submit" id="loginBtn" class="btn">Login to Dashboard</button>
+    </form>
+    <div class="session-info">
+      ℹ️ You will stay logged in until you click Logout
+    </div>
+    <div class="footer-text">Default: admin@terrainvanabas.com / admin123</div>
+    <div class="version">Version 2.0 | Persistent Session</div>
   </div>
-
-  <div class="container">
-    <div class="page-header">
-      <h2 class="page-title">Dashboard</h2>
-      <p class="page-subtitle" id="currentDate"></p>
-    </div>
-
-    <div id="loading" class="loading">
-      <div class="loading-spinner"></div>
-      <p>Loading dashboard statistics...</p>
-    </div>
-
-    <div id="errorMessage" style="display: none;"></div>
-
-    <div id="dashboardContent" style="display: none;">
-      <!-- Statistics Cards -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📅</div>
-          <div class="stat-value" id="todayBookings">0</div>
-          <div class="stat-label">Today's Bookings</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-value" id="todayCheckins">0</div>
-          <div class="stat-label">Today's Check-ins</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">🚪</div>
-          <div class="stat-value" id="todayCheckouts">0</div>
-          <div class="stat-label">Today's Check-outs</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">🏠</div>
-          <div class="stat-value" id="totalRooms">0</div>
-          <div class="stat-label">Total Rooms</div>
-        </div>
-      </div>
-
-      <!-- Occupancy Rate -->
-      <div class="occupancy-card">
-        <h3>📊 Current Occupancy Rate</h3>
-        <div class="occupancy-bar-container">
-          <div class="occupancy-bar" id="occupancyBar" style="width: 0%;">
-            <span class="occupancy-percentage" id="occupancyPercentage">0%</span>
-          </div>
-        </div>
-        <div class="occupancy-details">
-          <div class="occupancy-detail">
-            <div class="occupancy-detail-value" id="occupiedRooms">0</div>
-            <div class="occupancy-detail-label">Occupied Rooms</div>
-          </div>
-          <div class="occupancy-detail">
-            <div class="occupancy-detail-value" id="availableRooms">0</div>
-            <div class="occupancy-detail-label">Available Rooms</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <h3>⚡ Quick Actions</h3>
-        <div class="action-buttons">
-          <a href="bookings.html" class="action-btn">
-            <span class="action-btn-icon">➕</span>
-            <span>New Booking</span>
-          </a>
-          <a href="bookings.html" class="action-btn">
-            <span class="action-btn-icon">📋</span>
-            <span>View Bookings</span>
-          </a>
-          <a href="rooms.html" class="action-btn">
-            <span class="action-btn-icon">🏠</span>
-            <span>Manage Rooms</span>
-          </a>
-          <a href="availability.html" class="action-btn">
-            <span class="action-btn-icon">📆</span>
-            <span>Check Availability</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="last-updated">
-        Last updated: <span id="lastUpdated"></span>
-      </div>
-    </div>
-  </div>
-
-  <button class="refresh-btn" onclick="loadDashboard()" title="Refresh Dashboard">🔄</button>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwzrgJH3ZdKYRhf24f2Bzt-m0INibANF8_TIia0AKyzI3Y4EenxmmA0rbfrMs7vQykO/exec';
-
-    // API Client
-    const API = {
-      async call(action, params = {}) {
-        try {
-          const response = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action, ...params }),
-            headers: { 'Content-Type': 'text/plain' }
-          });
-          
-          if (!response.ok) throw new Error('Network error');
-          
-          const data = await response.json();
-          if (!data.success && data.error) throw new Error(data.error);
-          return data;
-        } catch (error) {
-          console.error('API Error:', error);
-          throw error;
-        }
-      },
-
-      async getDashboardStats() {
-        const result = await this.call('getDashboardStats');
-        return result.data || {};
+    // ⚠️ REPLACE WITH YOUR NEW DEPLOYMENT URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyCVJLsdm6DuZkmHW60QsJ1fih5iDPaRX8Ywk2c4ra2R4F6z-RGDU0uEs7-04TA5bi0/exec';
+    
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const alertBox = document.getElementById('alertBox');
+    
+    window.addEventListener('DOMContentLoaded', function() {
+      const userEmail = localStorage.getItem('tvb_userEmail');
+      const sessionId = localStorage.getItem('tvb_sessionId');
+      const isLoggedIn = localStorage.getItem('tvb_isLoggedIn');
+      
+      if (userEmail && sessionId && isLoggedIn === 'true') {
+        window.location.href = 'dashboard.html';
       }
-    };
-
-    // Load Dashboard Statistics
-    async function loadDashboard() {
+    });
+    
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+      
+      if (!email || !password) {
+        showAlert('Please enter both email and password', 'error');
+        return;
+      }
+      
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
+      
       try {
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('errorMessage').style.display = 'none';
-        document.getElementById('dashboardContent').style.display = 'none';
-
-        const stats = await API.getDashboardStats();
-
-        // Update statistics
-        document.getElementById('todayBookings').textContent = stats.todayBookings || 0;
-        document.getElementById('todayCheckins').textContent = stats.todayCheckins || 0;
-        document.getElementById('todayCheckouts').textContent = stats.todayCheckouts || 0;
-        document.getElementById('totalRooms').textContent = stats.totalRooms || 0;
-
-        // Calculate occupied and available rooms
-        const occupancyRate = stats.occupancyRate || 0;
-        const totalRooms = stats.totalRooms || 0;
-        const occupiedRooms = Math.round((occupancyRate / 100) * totalRooms);
-        const availableRooms = totalRooms - occupiedRooms;
-
-        // Update occupancy
-        document.getElementById('occupancyPercentage').textContent = occupancyRate + '%';
-        document.getElementById('occupancyBar').style.width = occupancyRate + '%';
-        document.getElementById('occupiedRooms').textContent = occupiedRooms;
-        document.getElementById('availableRooms').textContent = availableRooms;
-
-        // Update last updated time
-        document.getElementById('lastUpdated').textContent = new Date().toLocaleString('en-IN');
-
-        // Show dashboard
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('dashboardContent').style.display = 'block';
-
+        // FIXED: Removed Content-Type header to avoid CORS preflight
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'login',
+            email: email,
+            password: password
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          localStorage.setItem('tvb_userEmail', result.user.email);
+          localStorage.setItem('tvb_sessionId', result.user.sessionId);
+          localStorage.setItem('tvb_loginTime', result.user.loginTime);
+          localStorage.setItem('tvb_isLoggedIn', 'true');
+          localStorage.setItem('tvb_rememberMe', rememberMe ? 'true' : 'false');
+          
+          showAlert('✓ Login successful! Redirecting...', 'success');
+          
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          showAlert('✗ ' + (result.error || 'Invalid credentials'), 'error');
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = 'Login to Dashboard';
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
       } catch (error) {
-        console.error('Dashboard Error:', error);
-        document.getElementById('loading').style.display = 'none';
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.className = 'error-message';
-        errorDiv.innerHTML = `
-          <strong>❌ Error Loading Dashboard</strong><br>
-          ${error.message}<br>
-          <button onclick="loadDashboard()" style="margin-top: 15px; padding: 10px 20px; background: #2d5016; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            🔄 Retry
-          </button>
-        `;
-        errorDiv.style.display = 'block';
+        console.error('Login error:', error);
+        showAlert('✗ Connection error. Please re-deploy your Web App and update the API_URL.', 'error');
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = 'Login to Dashboard';
+      }
+    });
+    
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = 'alert alert-' + type;
+      alertBox.style.display = 'block';
+      if (type === 'success') {
+        setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
       }
     }
-
-    // Update Current Date
-    function updateCurrentDate() {
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      };
-      const today = new Date().toLocaleDateString('en-IN', options);
-      document.getElementById('currentDate').textContent = today;
-    }
-
-    // Initialize Dashboard
-    window.onload = function() {
-      console.log('Initializing Terrain Vanabas Dashboard...');
-      updateCurrentDate();
-      loadDashboard();
-
-      // Auto-refresh every 5 minutes
-      setInterval(loadDashboard, 5 * 60 * 1000);
-    };
+    
+    emailInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        passwordInput.focus();
+      }
+    });
   </script>
 </body>
 </html>
