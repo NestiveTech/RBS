@@ -45,9 +45,17 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
+      gap: 15px;
+      flex-wrap: wrap;
     }
     
     .page-title { color: #2d5016; font-size: 32px; }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
     
     .btn-primary {
       background: #2d5016;
@@ -60,6 +68,18 @@
       transition: all 0.3s;
     }
     .btn-primary:hover { background: #4a7c2b; transform: translateY(-2px); }
+    
+    .btn-quick {
+      background: #ff9800;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    .btn-quick:hover { background: #f57c00; transform: translateY(-2px); }
     
     .filters-bar {
       background: white;
@@ -148,6 +168,8 @@
     .btn-checkout:hover { background: #f57c00; }
     .btn-cancel { background: #dc3545; color: white; }
     .btn-cancel:hover { background: #c82333; }
+    .btn-edit { background: #17a2b8; color: white; }
+    .btn-edit:hover { background: #138496; }
     .btn-disabled {
       background: #e0e0e0;
       color: #999;
@@ -188,6 +210,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    
+    .modal-header.quick-booking {
+      background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
     }
     
     .modal-body { padding: 20px; }
@@ -284,6 +310,11 @@
       margin-bottom: 20px;
     }
     
+    .info-box.warning {
+      background: #fff3cd;
+      border-left-color: #ff9800;
+    }
+    
     .info-box p {
       margin: 0;
       color: #2d5016;
@@ -348,6 +379,9 @@
     @media (max-width: 768px) {
       .form-row { grid-template-columns: 1fr; }
       .filters-bar { flex-direction: column; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .action-buttons { width: 100%; }
+      .action-buttons button { flex: 1; }
     }
   </style>
 </head>
@@ -434,9 +468,14 @@
   <div class="container">
     <div class="page-header">
       <h2 class="page-title">All Bookings</h2>
-      <button class="btn-primary" onclick="openAddModal()">
-        <i class="fas fa-plus"></i> Add Booking
-      </button>
+      <div class="action-buttons">
+        <button class="btn-quick" onclick="openQuickBookingModal()">
+          <i class="fas fa-bolt"></i> Quick Booking
+        </button>
+        <button class="btn-primary" onclick="openAddModal()">
+          <i class="fas fa-plus"></i> Full Booking
+        </button>
+      </div>
     </div>
 
     <div class="filters-bar">
@@ -481,11 +520,59 @@
     </div>
   </div>
 
-  <!-- Add Booking Modal -->
+  <!-- QUICK BOOKING MODAL (No Customer Details) -->
+  <div class="modal" id="quickBookingModal">
+    <div class="modal-content">
+      <div class="modal-header quick-booking">
+        <h3>⚡ Quick Booking (Walk-in/Temporary)</h3>
+        <button style="background: none; border: none; color: white; font-size: 28px; cursor: pointer;" onclick="closeQuickModal()">&times;</button>
+      </div>
+      <form id="quickBookingForm" onsubmit="handleQuickSubmit(event)">
+        <div class="modal-body">
+          
+          <div class="info-box warning">
+            <p>⚡ Quick Booking Mode</p>
+            <p>No customer details required. Perfect for walk-ins or temporary reservations. You can update details later.</p>
+          </div>
+
+          <div class="rooms-selection">
+            <h4>🏠 Select Rooms (Multiple Allowed) *</h4>
+            <div class="selected-count" id="quickSelectedCount">No rooms selected</div>
+            <div id="quickRoomsCheckboxContainer"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Check-in Date *</label>
+              <input type="date" id="quickCheckin" required>
+            </div>
+            <div class="form-group">
+              <label>Check-out Date *</label>
+              <input type="date" id="quickCheckout" required>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <p>📋 Default Details Will Be Used:</p>
+            <p>Guest: Walk-in Guest | Email: walkin@temp.com | Phone: N/A | ID: Pending</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeQuickModal()">Cancel</button>
+          <button type="submit" class="btn-quick" id="quickSubmitBtn">
+            <i class="fas fa-bolt"></i> Quick Book Now
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FULL BOOKING MODAL (With Customer Details) -->
   <div class="modal" id="bookingModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>➕ Add New Booking</h3>
+        <h3>➕ Full Booking (Complete Details)</h3>
         <button style="background: none; border: none; color: white; font-size: 28px; cursor: pointer;" onclick="closeModal()">&times;</button>
       </div>
       <form id="bookingForm" onsubmit="handleSubmit(event)">
@@ -553,12 +640,13 @@
     let allBookings = [];
     let allRooms = [];
     let selectedRooms = [];
+    let quickSelectedRooms = [];
+    let editingBooking = null;
 
     // API Client (CORS-FIXED)
     const API = {
       async call(action, params = {}) {
         try {
-          // FIXED: Removed Content-Type header to avoid CORS
           const response = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({ action, ...params })
@@ -611,6 +699,14 @@
       }
     }
 
+    // Check if booking is a Quick Booking (Walk-in)
+    function isQuickBooking(booking) {
+      return booking.guest_name === 'Walk-in Guest' || 
+             booking.email === 'walkin@temp.com' ||
+             booking.phone === 'N/A' ||
+             booking.id_card === 'Pending';
+    }
+
     // Get Action Buttons
     function getActionButtons(booking) {
       try {
@@ -631,6 +727,11 @@
         oneDayBeforeCheckin.setDate(oneDayBeforeCheckin.getDate() - 1);
 
         let buttons = '';
+
+        // ADD EDIT BUTTON FOR QUICK BOOKINGS (only if confirmed or checked-in)
+        if (isQuickBooking(booking) && (booking.status === 'Confirmed' || booking.status === 'Checked-in')) {
+          buttons += `<button class="btn-sm btn-edit" onclick='openEditModal(${JSON.stringify(booking).replace(/'/g, "&apos;")})' title="Update guest details"><i class="fas fa-edit"></i> Edit Details</button>`;
+        }
 
         if (booking.status === 'Confirmed') {
           if (today.getTime() === checkinDate.getTime()) {
@@ -666,6 +767,35 @@
         console.error('Button generation error:', error);
         return '<span style="color: #dc3545; font-size: 12px;">Error</span>';
       }
+    }
+
+    // Open Edit Modal for Quick Bookings
+    function openEditModal(booking) {
+      editingBooking = booking;
+      
+      // Pre-fill form with current booking data
+      document.getElementById('inputGuestName').value = booking.guest_name === 'Walk-in Guest' ? '' : booking.guest_name;
+      document.getElementById('inputEmail').value = booking.email === 'walkin@temp.com' ? '' : booking.email;
+      document.getElementById('inputPhone').value = booking.phone === 'N/A' ? '' : booking.phone;
+      document.getElementById('inputIdCard').value = booking.id_card === 'Pending' ? '' : booking.id_card;
+      document.getElementById('inputCheckin').value = booking.checkin_date;
+      document.getElementById('inputCheckout').value = booking.checkout_date;
+      
+      // Change modal title and button
+      document.querySelector('#bookingModal .modal-header h3').innerHTML = '<i class="fas fa-edit"></i> Update Booking Details';
+      document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Save Changes';
+      
+      // Hide room selection (can't change room in edit mode)
+      document.querySelector('.rooms-selection').style.display = 'none';
+      
+      // Change info box
+      const infoBox = document.querySelector('#bookingModal .info-box');
+      infoBox.innerHTML = `
+        <p>✏️ Editing Quick Booking: <span style="color: #ff9800;">${booking.booking_id}</span></p>
+        <p>Update the guest details. Room: ${booking.room_id} | Status: ${booking.status}</p>
+      `;
+      
+      document.getElementById('bookingModal').classList.add('show');
     }
 
     // Update Booking Status
@@ -755,7 +885,7 @@
       }
     }
 
-    // Populate Room Checkboxes
+    // Populate Room Checkboxes (Full Booking)
     function populateRoomCheckboxes() {
       const container = document.getElementById('roomsCheckboxContainer');
       container.innerHTML = '';
@@ -795,7 +925,47 @@
       });
     }
 
-    // Update Selected Rooms
+    // Populate Room Checkboxes (Quick Booking)
+    function populateQuickRoomCheckboxes() {
+      const container = document.getElementById('quickRoomsCheckboxContainer');
+      container.innerHTML = '';
+      
+      if (allRooms.length === 0) {
+        container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No rooms available</p>';
+        return;
+      }
+      
+      allRooms.forEach(room => {
+        if (room.status === 'Active') {
+          const roomDiv = document.createElement('div');
+          roomDiv.className = 'room-checkbox';
+          roomDiv.id = `quick-room-checkbox-${room.room_id}`;
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = `quick-room-${room.room_id}`;
+          checkbox.value = room.room_id;
+          checkbox.onchange = updateQuickSelectedRooms;
+          
+          const label = document.createElement('label');
+          label.htmlFor = `quick-room-${room.room_id}`;
+          label.textContent = `${room.room_id} - ${room.room_name} (${room.room_type}, ${room.capacity} persons)`;
+          
+          roomDiv.appendChild(checkbox);
+          roomDiv.appendChild(label);
+          roomDiv.onclick = function(e) {
+            if (e.target.tagName !== 'INPUT') {
+              checkbox.checked = !checkbox.checked;
+              updateQuickSelectedRooms();
+            }
+          };
+          
+          container.appendChild(roomDiv);
+        }
+      });
+    }
+
+    // Update Selected Rooms (Full Booking)
     function updateSelectedRooms() {
       selectedRooms = [];
       const checkboxes = document.querySelectorAll('#roomsCheckboxContainer input[type="checkbox"]');
@@ -820,6 +990,31 @@
       }
     }
 
+    // Update Selected Rooms (Quick Booking)
+    function updateQuickSelectedRooms() {
+      quickSelectedRooms = [];
+      const checkboxes = document.querySelectorAll('#quickRoomsCheckboxContainer input[type="checkbox"]');
+      
+      checkboxes.forEach(cb => {
+        const roomDiv = document.getElementById(`quick-room-checkbox-${cb.value}`);
+        if (cb.checked) {
+          quickSelectedRooms.push(cb.value);
+          roomDiv.classList.add('checked');
+        } else {
+          roomDiv.classList.remove('checked');
+        }
+      });
+      
+      const countDiv = document.getElementById('quickSelectedCount');
+      if (quickSelectedRooms.length === 0) {
+        countDiv.textContent = 'No rooms selected';
+      } else if (quickSelectedRooms.length === 1) {
+        countDiv.textContent = '1 room selected';
+      } else {
+        countDiv.textContent = `${quickSelectedRooms.length} rooms selected`;
+      }
+    }
+
     // Display Bookings
     function displayBookings(bookings) {
       document.getElementById('loading').style.display = 'none';
@@ -840,10 +1035,16 @@
         const actionButtons = getActionButtons(booking);
         
         const row = document.createElement('tr');
+        
+        // Highlight quick bookings with a subtle background
+        if (isQuickBooking(booking)) {
+          row.style.background = '#fff9e6';
+        }
+        
         row.innerHTML = `
           <td><span class="booking-id">${booking.booking_id || 'N/A'}</span></td>
           <td>${booking.room_id || '-'}</td>
-          <td>${booking.guest_name || '-'}</td>
+          <td>${booking.guest_name || '-'} ${isQuickBooking(booking) ? '<span style="color: #ff9800; font-size: 11px; font-weight: bold;">⚡</span>' : ''}</td>
           <td>${booking.email || '-'}</td>
           <td>${booking.phone || '-'}</td>
           <td>${formatDate(booking.checkin_date)}</td>
@@ -855,8 +1056,35 @@
       });
     }
 
-    // Open Add Modal
+    // Open Quick Booking Modal
+    function openQuickBookingModal() {
+      if (allRooms.length === 0) {
+        showToast('Loading rooms...', 'error');
+        loadRooms().then(() => {
+          if (allRooms.length > 0) openQuickBookingModalAfterRoomsLoaded();
+        });
+        return;
+      }
+      openQuickBookingModalAfterRoomsLoaded();
+    }
+
+    function openQuickBookingModalAfterRoomsLoaded() {
+      document.getElementById('quickBookingForm').reset();
+      quickSelectedRooms = [];
+      
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('quickCheckin').setAttribute('min', today);
+      document.getElementById('quickCheckout').setAttribute('min', today);
+      
+      populateQuickRoomCheckboxes();
+      updateQuickSelectedRooms();
+      document.getElementById('quickBookingModal').classList.add('show');
+    }
+
+    // Open Full Booking Modal
     function openAddModal() {
+      editingBooking = null; // Reset editing state
+      
       if (allRooms.length === 0) {
         showToast('Loading rooms...', 'error');
         loadRooms().then(() => {
@@ -871,6 +1099,20 @@
       document.getElementById('bookingForm').reset();
       selectedRooms = [];
       
+      // Reset modal title and button
+      document.querySelector('#bookingModal .modal-header h3').innerHTML = '➕ Full Booking (Complete Details)';
+      document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i> Confirm Booking(s)';
+      
+      // Show room selection
+      document.querySelector('.rooms-selection').style.display = 'block';
+      
+      // Reset info box
+      const infoBox = document.querySelector('#bookingModal .info-box');
+      infoBox.innerHTML = `
+        <p>📋 Booking Status: <span style="color: #28a745;">Confirmed</span></p>
+        <p>All new bookings are automatically confirmed. Guest can check-in on the scheduled date.</p>
+      `;
+      
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('inputCheckin').setAttribute('min', today);
       document.getElementById('inputCheckout').setAttribute('min', today);
@@ -880,10 +1122,110 @@
       document.getElementById('bookingModal').classList.add('show');
     }
 
-    // Handle Form Submit
+    // Handle Quick Booking Submit
+    async function handleQuickSubmit(e) {
+      e.preventDefault();
+      
+      if (quickSelectedRooms.length === 0) {
+        showToast('Please select at least one room', 'error');
+        return;
+      }
+
+      const checkin = document.getElementById('quickCheckin').value;
+      const checkout = document.getElementById('quickCheckout').value;
+      
+      if (new Date(checkout) <= new Date(checkin)) {
+        showToast('Check-out must be after check-in date', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('quickSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+      const baseData = {
+        guest_name: 'Walk-in Guest',
+        email: 'walkin@temp.com',
+        phone: 'N/A',
+        id_card: 'Pending',
+        checkin_date: checkin,
+        checkout_date: checkout,
+        status: 'Confirmed'
+      };
+
+      try {
+        let successCount = 0;
+        
+        for (const roomId of quickSelectedRooms) {
+          try {
+            const formData = { ...baseData, room_id: roomId };
+            await API.addBooking(formData);
+            successCount++;
+          } catch (error) {
+            console.error(`Failed room ${roomId}:`, error);
+          }
+        }
+        
+        if (successCount > 0) {
+          showToast(`⚡ ${successCount} quick booking(s) created!`, 'success');
+          closeQuickModal();
+          loadBookings();
+        } else {
+          showToast('❌ All bookings failed', 'error');
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-bolt"></i> Quick Book Now';
+      }
+    }
+
+    // Handle Full Booking Submit (or Edit)
     async function handleSubmit(e) {
       e.preventDefault();
       
+      // If editing, update existing booking
+      if (editingBooking) {
+        const checkin = document.getElementById('inputCheckin').value;
+        const checkout = document.getElementById('inputCheckout').value;
+        
+        if (new Date(checkout) <= new Date(checkin)) {
+          showToast('Check-out must be after check-in date', 'error');
+          return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        try {
+          const formData = {
+            room_id: editingBooking.room_id, // Keep same room
+            guest_name: document.getElementById('inputGuestName').value,
+            email: document.getElementById('inputEmail').value,
+            phone: document.getElementById('inputPhone').value,
+            id_card: document.getElementById('inputIdCard').value,
+            checkin_date: checkin,
+            checkout_date: checkout,
+            status: editingBooking.status // Keep same status
+          };
+
+          await API.updateBooking(editingBooking.rowIndex, formData);
+          showToast('✅ Booking details updated successfully!', 'success');
+          closeModal();
+          loadBookings();
+          editingBooking = null;
+        } catch (error) {
+          showToast(error.message, 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+        }
+        return;
+      }
+      
+      // Otherwise, create new bookings
       if (selectedRooms.length === 0) {
         showToast('Please select at least one room', 'error');
         return;
@@ -913,7 +1255,6 @@
 
       try {
         let successCount = 0;
-        let failCount = 0;
         
         for (const roomId of selectedRooms) {
           try {
@@ -922,7 +1263,6 @@
             successCount++;
           } catch (error) {
             console.error(`Failed room ${roomId}:`, error);
-            failCount++;
           }
         }
         
@@ -941,9 +1281,14 @@
       }
     }
 
-    // Close Modal
+    // Close Modals
+    function closeQuickModal() {
+      document.getElementById('quickBookingModal').classList.remove('show');
+    }
+
     function closeModal() {
       document.getElementById('bookingModal').classList.remove('show');
+      editingBooking = null;
     }
 
     // Apply Filters
