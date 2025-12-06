@@ -223,11 +223,70 @@
       color: #666;
     }
     
-    /* Mobile Optimizations */
+    /* User Header - NO FLOATING */
+    .user-header {
+      background: rgba(45, 80, 22, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .user-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .user-details {
+      text-align: left;
+    }
+    
+    .user-details .email {
+      font-size: clamp(13px, 3vw, 14px);
+      background: rgba(255,255,255,0.2);
+      padding: 8px 12px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    
+    .user-details .login-time {
+      font-size: clamp(10px, 2.5vw, 11px);
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+    
+    .logout-btn {
+      padding: 10px 20px;
+      background: rgba(255,77,77,0.9);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: clamp(12px, 3vw, 13px);
+      font-weight: 600;
+      transition: all 0.3s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,77,77,1);
+      transform: translateY(-1px);
+    }
+    
+    /* Mobile Optimizations - NO FLOATING */
     @media (max-width: 768px) {
       .header { 
         padding: 15px 10px; 
-        padding-top: 80px; 
       }
       .container { margin: 15px auto; padding: 0 10px; }
       .stats-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -238,39 +297,19 @@
       .stat-card { padding: 18px 15px; }
       .quick-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       
-      /* User info mobile layout */
-      #userInfo {
-        position: fixed !important;
-        top: 10px !important;
-        right: 10px !important;
-        left: 10px !important;
-        flex-direction: column !important;
-        gap: 8px !important;
-        z-index: 1000;
-        background: rgba(45, 80, 22, 0.95);
-        padding: 12px;
-        border-radius: 8px;
-        backdrop-filter: blur(10px);
+      .user-header {
+        margin: 10px;
+        margin-bottom: 15px;
       }
       
-      #userInfo > div {
-        text-align: center !important;
+      .user-info {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .logout-btn {
         width: 100%;
-      }
-      
-      #userInfo > div > div:first-child {
-        font-size: 12px !important;
-        padding: 6px 10px !important;
-      }
-      
-      #userInfo > div > div:last-child {
-        font-size: 10px !important;
-      }
-      
-      #userInfo button {
-        width: 100%;
-        padding: 10px 12px !important;
-        font-size: 13px !important;
+        justify-content: center;
       }
       
       .nav-menu { 
@@ -304,72 +343,6 @@
   </style>
 </head>
 <body>
-  <script>
-    window.addEventListener('DOMContentLoaded', function() {
-      const userEmail = localStorage.getItem('tvb_userEmail');
-      const sessionId = localStorage.getItem('tvb_sessionId');
-      const isLoggedIn = localStorage.getItem('tvb_isLoggedIn');
-      
-      if (!userEmail || !sessionId || isLoggedIn !== 'true') {
-        window.location.href = 'index.html';
-        return;
-      }
-      
-      addUserHeader(userEmail);
-    });
-
-    function addUserHeader(email) {
-      const header = document.querySelector('.header');
-      if (header && !document.getElementById('userInfo')) {
-        const userInfo = document.createElement('div');
-        userInfo.id = 'userInfo';
-        userInfo.style.cssText = 'position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 15px; z-index: 1000;';
-        
-        const loginTime = localStorage.getItem('tvb_loginTime');
-        const loginDate = loginTime ? new Date(loginTime).toLocaleString('en-IN', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }) : '';
-        
-        userInfo.innerHTML = `
-          <div style="text-align: right;">
-            <div style="font-size: 14px; background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 5px;">
-              👤 ${email}
-            </div>
-            <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">
-              Logged in: ${loginDate}
-            </div>
-          </div>
-          <button onclick="logout()" style="padding: 8px 16px; background: rgba(255,77,77,0.9); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
-            <i class="fas fa-sign-out-alt"></i> Logout
-          </button>
-        `;
-        header.appendChild(userInfo);
-      }
-    }
-
-    function logout() {
-      if (confirm('Are you sure you want to logout?')) {
-        localStorage.removeItem('tvb_userEmail');
-        localStorage.removeItem('tvb_sessionId');
-        localStorage.removeItem('tvb_loginTime');
-        localStorage.removeItem('tvb_isLoggedIn');
-        localStorage.removeItem('tvb_rememberMe');
-        alert('✓ You have been logged out successfully!');
-        window.location.href = 'index.html';
-      }
-    }
-
-    window.addEventListener('pageshow', function(event) {
-      const isLoggedIn = localStorage.getItem('tvb_isLoggedIn');
-      if (event.persisted && isLoggedIn !== 'true') {
-        window.location.reload();
-      }
-    });
-  </script>
-
   <div class="header">
     <h1>🌳 Terrain Vanabas</h1>
     <p>Booking Management Dashboard</p>
@@ -383,7 +356,9 @@
   </nav>
 
   <div class="container">
-    
+    <!-- User Header - In Container, NO FLOATING -->
+    <div class="user-header" id="userHeader"></div>
+
     <div class="welcome-card">
       <h2>📊 Welcome to Your Dashboard</h2>
       <p>Real-time analytics and insights for Terrain Vanabas</p>
@@ -459,8 +434,6 @@
 
     <!-- Charts -->
     <div class="charts-grid">
-      
-      <!-- Booking Status Distribution -->
       <div class="chart-card">
         <h3><i class="fas fa-chart-pie"></i> Booking Status Distribution</h3>
         <div class="chart-container">
@@ -468,7 +441,6 @@
         </div>
       </div>
 
-      <!-- Room Occupancy -->
       <div class="chart-card">
         <h3><i class="fas fa-chart-bar"></i> Room Occupancy Status</h3>
         <div class="chart-container">
@@ -476,7 +448,6 @@
         </div>
       </div>
 
-      <!-- Weekly Bookings Trend -->
       <div class="chart-card full-width">
         <h3><i class="fas fa-chart-line"></i> Bookings Trend (Last 30 Days)</h3>
         <div class="chart-container">
@@ -484,7 +455,6 @@
         </div>
       </div>
 
-      <!-- Room Type Distribution -->
       <div class="chart-card">
         <h3><i class="fas fa-door-open"></i> Room Type Distribution</h3>
         <div class="chart-container">
@@ -492,16 +462,13 @@
         </div>
       </div>
 
-      <!-- Monthly Revenue Projection -->
       <div class="chart-card">
         <h3><i class="fas fa-dollar-sign"></i> Check-ins vs Check-outs</h3>
         <div class="chart-container">
           <canvas id="checkInOutChart"></canvas>
         </div>
       </div>
-
     </div>
-
   </div>
 
   <script>
@@ -516,12 +483,59 @@
     Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
     Chart.defaults.color = '#666';
 
+    window.addEventListener('DOMContentLoaded', function() {
+      const userEmail = localStorage.getItem('tvb_userEmail');
+      const sessionId = localStorage.getItem('tvb_sessionId');
+      const isLoggedIn = localStorage.getItem('tvb_isLoggedIn');
+      
+      if (!userEmail || !sessionId || isLoggedIn !== 'true') {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      addUserHeader(userEmail);
+      loadDashboard();
+    });
+
+    function addUserHeader(email) {
+      const userHeader = document.getElementById('userHeader');
+      const loginTime = localStorage.getItem('tvb_loginTime');
+      const loginDate = loginTime ? new Date(loginTime).toLocaleString('en-IN', { 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }) : '';
+      
+      userHeader.innerHTML = `
+        <div class="user-info">
+          <div class="user-details">
+            <div class="email">👤 ${email}</div>
+            <div class="login-time">Logged in: ${loginDate}</div>
+          </div>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      `;
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('tvb_userEmail');
+        localStorage.removeItem('tvb_sessionId');
+        localStorage.removeItem('tvb_loginTime');
+        localStorage.removeItem('tvb_isLoggedIn');
+        localStorage.removeItem('tvb_rememberMe');
+        alert('✓ You have been logged out successfully!');
+        window.location.href = 'index.html';
+      }
+    }
+
     async function loadDashboard() {
       try {
-        // Show loading
         console.log('Loading dashboard data...');
 
-        // Fetch bookings and rooms
         const [bookingsRes, roomsRes] = await Promise.all([
           fetch(API_URL, {
             method: 'POST',
@@ -541,7 +555,6 @@
         
         console.log('Bookings:', allBookings.length, 'Rooms:', allRooms.length);
         
-        // Calculate and display stats
         calculateStats();
         createCharts();
         
@@ -554,6 +567,7 @@
       }
     }
 
+    // Rest of the JavaScript functions remain exactly the same...
     function calculateStats() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -568,23 +582,19 @@
         checkinDate.setHours(0, 0, 0, 0);
         checkoutDate.setHours(0, 0, 0, 0);
         
-        // Today's stats
         if (checkinDate.getTime() === today.getTime()) todayCheckins++;
         if (checkoutDate.getTime() === today.getTime()) todayCheckouts++;
         
-        // Current occupancy
         if ((booking.status === 'Checked-in' || booking.status === 'Confirmed') && 
             checkinDate <= today && today < checkoutDate) {
           occupiedRooms.add(String(booking.room_id));
           activeBookings++;
         }
         
-        // Upcoming bookings
         if (booking.status === 'Confirmed' && checkinDate > today) {
           upcomingBookings++;
         }
         
-        // Status counts
         if (booking.status === 'Completed') completedBookings++;
         if (booking.status === 'Cancelled') cancelledBookings++;
       });
@@ -592,19 +602,16 @@
       const occupancyRate = allRooms.length > 0 ? 
         Math.round((occupiedRooms.size / allRooms.length) * 100) : 0;
       
-      // Update main stats
       document.getElementById('todayBookings').textContent = todayCheckins + todayCheckouts;
       document.getElementById('todayCheckins').textContent = todayCheckins;
       document.getElementById('todayCheckouts').textContent = todayCheckouts;
       document.getElementById('occupancyRate').textContent = occupancyRate + '%';
       
-      // Update trends
       document.getElementById('bookingsTrend').innerHTML = `<i class="fas fa-chart-line"></i> Active: ${activeBookings}`;
       document.getElementById('checkinsTrend').innerHTML = `<i class="fas fa-arrow-up"></i> Expected today`;
       document.getElementById('checkoutsTrend').innerHTML = `<i class="fas fa-arrow-down"></i> Expected today`;
       document.getElementById('occupancyTrend').innerHTML = `<i class="fas fa-bed"></i> ${occupiedRooms.size}/${allRooms.length} rooms`;
       
-      // Update quick stats
       document.getElementById('totalRooms').textContent = allRooms.length;
       document.getElementById('activeBookings').textContent = activeBookings;
       document.getElementById('upcomingBookings').textContent = upcomingBookings;
@@ -620,18 +627,9 @@
       createCheckInOutChart();
     }
 
-    // 1. Booking Status Distribution (Pie Chart)
     function createStatusChart() {
-      const statusCounts = {
-        'Confirmed': 0,
-        'Checked-in': 0,
-        'Completed': 0,
-        'Cancelled': 0
-      };
-      
-      allBookings.forEach(b => {
-        if (statusCounts[b.status] !== undefined) statusCounts[b.status]++;
-      });
+      const statusCounts = {'Confirmed': 0, 'Checked-in': 0, 'Completed': 0, 'Cancelled': 0};
+      allBookings.forEach(b => { if (statusCounts[b.status] !== undefined) statusCounts[b.status]++; });
       
       const ctx = document.getElementById('statusChart').getContext('2d');
       if (charts.statusChart) charts.statusChart.destroy();
@@ -639,243 +637,87 @@
         type: 'doughnut',
         data: {
           labels: Object.keys(statusCounts),
-          datasets: [{
-            data: Object.values(statusCounts),
-            backgroundColor: [
-              '#4caf50',
-              '#2196f3',
-              '#9e9e9e',
-              '#f44336'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-          }]
+          datasets: [{data: Object.values(statusCounts), backgroundColor: ['#4caf50','#2196f3','#9e9e9e','#f44336'], borderWidth: 2, borderColor: '#fff'}]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { padding: 15, font: { size: 12 } }
-            }
-          }
-        }
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom', labels: {padding: 15, font: {size: 12}}}}}
       });
     }
 
-    // 2. Room Occupancy (Bar Chart)
     function createOccupancyChart() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
+      const today = new Date(); today.setHours(0, 0, 0, 0);
       const occupiedRooms = new Set();
       allBookings.forEach(b => {
-        const checkin = new Date(b.checkin_date);
-        const checkout = new Date(b.checkout_date);
-        checkin.setHours(0, 0, 0, 0);
-        checkout.setHours(0, 0, 0, 0);
-        
-        if ((b.status === 'Checked-in' || b.status === 'Confirmed') && 
-            checkin <= today && today < checkout) {
+        const checkin = new Date(b.checkin_date), checkout = new Date(b.checkout_date);
+        checkin.setHours(0, 0, 0, 0); checkout.setHours(0, 0, 0, 0);
+        if ((b.status === 'Checked-in' || b.status === 'Confirmed') && checkin <= today && today < checkout) {
           occupiedRooms.add(String(b.room_id));
         }
       });
       
-      const occupied = occupiedRooms.size;
-      const available = allRooms.length - occupied;
-      
+      const occupied = occupiedRooms.size, available = allRooms.length - occupied;
       const ctx = document.getElementById('occupancyChart').getContext('2d');
       if (charts.occupancyChart) charts.occupancyChart.destroy();
       charts.occupancyChart = new Chart(ctx, {
         type: 'bar',
-        data: {
-          labels: ['Occupied', 'Available'],
-          datasets: [{
-            label: 'Rooms',
-            data: [occupied, available],
-            backgroundColor: ['#f44336', '#4caf50'],
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { stepSize: 1 }
-            }
-          }
-        }
+        data: {labels: ['Occupied', 'Available'], datasets: [{label: 'Rooms', data: [occupied, available], backgroundColor: ['#f44336', '#4caf50'], borderRadius: 8}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}
       });
     }
 
-    // 3. Bookings Trend (Line Chart - Last 30 Days)
     function createTrendChart() {
-      const days = [];
-      const bookingCounts = [];
-      
+      const days = [], bookingCounts = [];
       for (let i = 29; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        date.setHours(0, 0, 0, 0);
-        
-        const count = allBookings.filter(b => {
-          const checkin = new Date(b.checkin_date);
-          checkin.setHours(0, 0, 0, 0);
-          return checkin.getTime() === date.getTime();
-        }).length;
-        
-        days.push(date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }));
-        bookingCounts.push(count);
+        const date = new Date(); date.setDate(date.getDate() - i); date.setHours(0, 0, 0, 0);
+        const count = allBookings.filter(b => {const checkin = new Date(b.checkin_date); checkin.setHours(0, 0, 0, 0); return checkin.getTime() === date.getTime();}).length;
+        days.push(date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })); bookingCounts.push(count);
       }
       
       const ctx = document.getElementById('trendChart').getContext('2d');
       if (charts.trendChart) charts.trendChart.destroy();
       charts.trendChart = new Chart(ctx, {
         type: 'line',
-        data: {
-          labels: days,
-          datasets: [{
-            label: 'Bookings',
-            data: bookingCounts,
-            borderColor: '#2d5016',
-            backgroundColor: 'rgba(45, 80, 22, 0.1)',
-            tension: 0.4,
-            fill: true,
-            pointRadius: 4,
-            pointHoverRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { stepSize: 1 }
-            }
-          }
-        }
+        data: {labels: days, datasets: [{label: 'Bookings', data: bookingCounts, borderColor: '#2d5016', backgroundColor: 'rgba(45, 80, 22, 0.1)', tension: 0.4, fill: true, pointRadius: 4, pointHoverRadius: 6}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}
       });
     }
 
-    // 4. Room Type Distribution (Pie Chart)
     function createRoomTypeChart() {
       const roomTypes = {};
-      allRooms.forEach(r => {
-        roomTypes[r.room_type] = (roomTypes[r.room_type] || 0) + 1;
-      });
+      allRooms.forEach(r => { roomTypes[r.room_type] = (roomTypes[r.room_type] || 0) + 1; });
       
       const ctx = document.getElementById('roomTypeChart').getContext('2d');
       if (charts.roomTypeChart) charts.roomTypeChart.destroy();
       charts.roomTypeChart = new Chart(ctx, {
         type: 'pie',
-        data: {
-          labels: Object.keys(roomTypes),
-          datasets: [{
-            data: Object.values(roomTypes),
-            backgroundColor: [
-              '#ff6384',
-              '#36a2eb',
-              '#ffcd56',
-              '#4bc0c0',
-              '#9966ff'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { padding: 15, font: { size: 12 } }
-            }
-          }
-        }
+        data: {labels: Object.keys(roomTypes), datasets: [{data: Object.values(roomTypes), backgroundColor: ['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff'], borderWidth: 2, borderColor: '#fff'}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom', labels: {padding: 15, font: {size: 12}}}}}
       });
     }
 
-    // 5. Check-ins vs Check-outs (Bar Chart - Next 7 Days)
     function createCheckInOutChart() {
-      const days = [];
-      const checkins = [];
-      const checkouts = [];
-      
+      const days = [], checkins = [], checkouts = [];
       for (let i = 0; i < 7; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() + i);
-        date.setHours(0, 0, 0, 0);
-        
-        const checkinCount = allBookings.filter(b => {
-          const checkin = new Date(b.checkin_date);
-          checkin.setHours(0, 0, 0, 0);
-          return checkin.getTime() === date.getTime() && b.status !== 'Cancelled';
-        }).length;
-        
-        const checkoutCount = allBookings.filter(b => {
-          const checkout = new Date(b.checkout_date);
-          checkout.setHours(0, 0, 0, 0);
-          return checkout.getTime() === date.getTime() && b.status !== 'Cancelled';
-        }).length;
-        
-        days.push(date.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' }));
-        checkins.push(checkinCount);
-        checkouts.push(checkoutCount);
+        const date = new Date(); date.setDate(date.getDate() + i); date.setHours(0, 0, 0, 0);
+        const checkinCount = allBookings.filter(b => {const checkin = new Date(b.checkin_date); checkin.setHours(0, 0, 0, 0); return checkin.getTime() === date.getTime() && b.status !== 'Cancelled';}).length;
+        const checkoutCount = allBookings.filter(b => {const checkout = new Date(b.checkout_date); checkout.setHours(0, 0, 0, 0); return checkout.getTime() === date.getTime() && b.status !== 'Cancelled';}).length;
+        days.push(date.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })); checkins.push(checkinCount); checkouts.push(checkoutCount);
       }
       
       const ctx = document.getElementById('checkInOutChart').getContext('2d');
       if (charts.checkInOutChart) charts.checkInOutChart.destroy();
       charts.checkInOutChart = new Chart(ctx, {
         type: 'bar',
-        data: {
-          labels: days,
-          datasets: [
-            {
-              label: 'Check-ins',
-              data: checkins,
-              backgroundColor: '#4caf50',
-              borderRadius: 6
-            },
-            {
-              label: 'Check-outs',
-              data: checkouts,
-              backgroundColor: '#ff9800',
-              borderRadius: 6
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: { padding: 15, font: { size: 12 } }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { stepSize: 1 }
-            }
-          }
-        }
+        data: {labels: days, datasets: [{label: 'Check-ins', data: checkins, backgroundColor: '#4caf50', borderRadius: 6}, {label: 'Check-outs', data: checkouts, backgroundColor: '#ff9800', borderRadius: 6}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top', labels: {padding: 15, font: {size: 12}}}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}
       });
     }
 
-    // Load dashboard on page load
-    window.addEventListener('DOMContentLoaded', loadDashboard);
+    window.addEventListener('pageshow', function(event) {
+      const isLoggedIn = localStorage.getItem('tvb_isLoggedIn');
+      if (event.persisted && isLoggedIn !== 'true') {
+        window.location.reload();
+      }
+    });
   </script>
 </body>
 </html>
