@@ -13,13 +13,13 @@
     .header {
       background: linear-gradient(135deg, #2d5016 0%, #4a7c2b 100%);
       color: white;
-      padding: 30px;
+      padding: 20px 15px;
       text-align: center;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       position: relative;
     }
-    .header h1 { font-size: 32px; margin-bottom: 10px; }
-    .header p { font-size: 16px; opacity: 0.9; }
+    .header h1 { font-size: clamp(20px, 5vw, 32px); margin-bottom: 8px; }
+    .header p { font-size: clamp(13px, 3vw, 16px); opacity: 0.9; }
     
     .nav-menu {
       background: white;
@@ -28,42 +28,57 @@
       justify-content: center;
       gap: 0;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc transparent;
+    }
+    .nav-menu::-webkit-scrollbar {
+      height: 4px;
+    }
+    .nav-menu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .nav-menu::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 2px;
     }
     .nav-menu a {
-      padding: 15px 30px;
+      padding: 15px 20px;
       text-decoration: none;
       color: #333;
       font-weight: 500;
       transition: all 0.3s;
       border-bottom: 3px solid transparent;
       white-space: nowrap;
+      font-size: 14px;
+      flex-shrink: 0;
     }
     .nav-menu a:hover { background: #f0f0f0; border-bottom-color: #4a7c2b; }
     .nav-menu a.active { background: #f0f0f0; border-bottom-color: #2d5016; color: #2d5016; }
     
-    .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+    .container { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
     
     .welcome-card {
       background: linear-gradient(135deg, #2d5016 0%, #4a7c2b 100%);
       color: white;
-      padding: 30px;
+      padding: 25px 20px;
       border-radius: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-    .welcome-card h2 { margin-bottom: 10px; font-size: 28px; }
-    .welcome-card p { opacity: 0.9; font-size: 16px; }
+    .welcome-card h2 { margin-bottom: 8px; font-size: clamp(20px, 4vw, 28px); }
+    .welcome-card p { opacity: 0.9; font-size: clamp(13px, 3vw, 16px); }
     
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
     }
     
     .stat-card {
       background: white;
-      padding: 25px;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       border-left: 4px solid #2d5016;
@@ -73,7 +88,7 @@
     }
     
     .stat-card:hover { 
-      transform: translateY(-5px); 
+      transform: translateY(-3px); 
       box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
     }
     
@@ -82,15 +97,15 @@
       position: absolute;
       top: 0;
       right: 0;
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       background: linear-gradient(135deg, rgba(45, 80, 22, 0.05) 0%, transparent 100%);
       border-radius: 0 0 0 100%;
     }
     
     .stat-card h3 { 
       color: #666; 
-      font-size: 14px; 
+      font-size: clamp(12px, 2.5vw, 14px); 
       margin-bottom: 10px; 
       text-transform: uppercase; 
       letter-spacing: 0.5px; 
@@ -98,7 +113,7 @@
     }
     
     .stat-card .number { 
-      font-size: 42px; 
+      font-size: clamp(28px, 6vw, 42px); 
       font-weight: bold; 
       color: #2d5016; 
       margin-bottom: 8px; 
@@ -107,7 +122,7 @@
     }
     
     .stat-card .trend {
-      font-size: 13px;
+      font-size: clamp(11px, 2.5vw, 13px);
       color: #666;
       display: flex;
       align-items: center;
@@ -119,41 +134,43 @@
     
     .stat-card .icon { 
       position: absolute;
-      right: 20px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 50px; 
+      font-size: clamp(35px, 8vw, 50px); 
       opacity: 0.15; 
       z-index: 0;
     }
     
     .charts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 25px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
     }
     
     .chart-card {
       background: white;
-      padding: 25px;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .chart-card h3 {
       color: #2d5016;
-      margin-bottom: 20px;
-      font-size: 18px;
+      margin-bottom: 15px;
+      font-size: clamp(15px, 3vw, 18px);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     
     .chart-container {
       position: relative;
       height: 300px;
+      width: 100%;
     }
     
     .chart-card.full-width {
@@ -162,14 +179,14 @@
     
     .quick-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
     
     .quick-stat-item {
       background: white;
-      padding: 20px;
+      padding: 18px 15px;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       text-align: center;
@@ -182,19 +199,19 @@
     }
     
     .quick-stat-item .icon {
-      font-size: 32px;
-      margin-bottom: 10px;
+      font-size: clamp(24px, 5vw, 32px);
+      margin-bottom: 8px;
     }
     
     .quick-stat-item .value {
-      font-size: 24px;
+      font-size: clamp(20px, 4vw, 24px);
       font-weight: bold;
       color: #2d5016;
       margin-bottom: 5px;
     }
     
     .quick-stat-item .label {
-      font-size: 13px;
+      font-size: clamp(11px, 2.5vw, 13px);
       color: #666;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -206,16 +223,87 @@
       color: #666;
     }
     
+    /* Mobile Optimizations */
     @media (max-width: 768px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .charts-grid { grid-template-columns: 1fr; }
-      .nav-menu { justify-content: flex-start; }
+      .header { 
+        padding: 15px 10px; 
+        padding-top: 80px; 
+      }
+      .container { margin: 15px auto; padding: 0 10px; }
+      .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+      .charts-grid { grid-template-columns: 1fr; gap: 15px; }
       .chart-container { height: 250px; }
+      .welcome-card { padding: 20px 15px; margin-bottom: 15px; }
+      .chart-card { padding: 15px; }
+      .stat-card { padding: 18px 15px; }
+      .quick-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      
+      /* User info mobile layout */
+      #userInfo {
+        position: fixed !important;
+        top: 10px !important;
+        right: 10px !important;
+        left: 10px !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        z-index: 1000;
+        background: rgba(45, 80, 22, 0.95);
+        padding: 12px;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+      }
+      
+      #userInfo > div {
+        text-align: center !important;
+        width: 100%;
+      }
+      
+      #userInfo > div > div:first-child {
+        font-size: 12px !important;
+        padding: 6px 10px !important;
+      }
+      
+      #userInfo > div > div:last-child {
+        font-size: 10px !important;
+      }
+      
+      #userInfo button {
+        width: 100%;
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+      }
+      
+      .nav-menu { 
+        justify-content: flex-start; 
+        padding: 0 5px;
+      }
+      .nav-menu a {
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 { font-size: 22px; }
+      .header p { font-size: 13px; }
+      .welcome-card h2 { font-size: 20px; }
+      .stat-card .number { font-size: 32px; }
+      .chart-container { height: 220px; }
+      .quick-stats { grid-template-columns: repeat(2, 1fr); }
+      .nav-menu a { padding: 12px 14px; font-size: 12px; }
+      .container { padding: 0 8px; }
+    }
+    
+    @media (max-width: 360px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .quick-stats { grid-template-columns: 1fr; }
+      .chart-card h3 { font-size: 14px; }
+      .nav-menu a { padding: 10px 12px; font-size: 12px; }
+      .quick-stat-item { padding: 15px 12px; }
     }
   </style>
 </head>
 <body>
-  
   <script>
     window.addEventListener('DOMContentLoaded', function() {
       const userEmail = localStorage.getItem('tvb_userEmail');
@@ -546,6 +634,7 @@
       });
       
       const ctx = document.getElementById('statusChart').getContext('2d');
+      if (charts.statusChart) charts.statusChart.destroy();
       charts.statusChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -597,6 +686,7 @@
       const available = allRooms.length - occupied;
       
       const ctx = document.getElementById('occupancyChart').getContext('2d');
+      if (charts.occupancyChart) charts.occupancyChart.destroy();
       charts.occupancyChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -645,6 +735,7 @@
       }
       
       const ctx = document.getElementById('trendChart').getContext('2d');
+      if (charts.trendChart) charts.trendChart.destroy();
       charts.trendChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -684,6 +775,7 @@
       });
       
       const ctx = document.getElementById('roomTypeChart').getContext('2d');
+      if (charts.roomTypeChart) charts.roomTypeChart.destroy();
       charts.roomTypeChart = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -743,6 +835,7 @@
       }
       
       const ctx = document.getElementById('checkInOutChart').getContext('2d');
+      if (charts.checkInOutChart) charts.checkInOutChart.destroy();
       charts.checkInOutChart = new Chart(ctx, {
         type: 'bar',
         data: {
