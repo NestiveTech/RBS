@@ -12,12 +12,13 @@
     .header {
       background: linear-gradient(135deg, #2d5016 0%, #4a7c2b 100%);
       color: white;
-      padding: 30px;
+      padding: 20px 15px;
       text-align: center;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       position: relative;
     }
-    .header h1 { font-size: 32px; margin-bottom: 10px; }
+    .header h1 { font-size: 24px; margin-bottom: 8px; }
+    .header p { font-size: 14px; opacity: 0.9; }
     
     .nav-menu {
       background: white;
@@ -26,59 +27,69 @@
       justify-content: center;
       gap: 0;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .nav-menu a {
-      padding: 15px 30px;
+      padding: 12px 20px;
       text-decoration: none;
       color: #333;
       font-weight: 500;
       transition: all 0.3s;
       border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      font-size: 14px;
     }
     .nav-menu a:hover { background: #f0f0f0; border-bottom-color: #4a7c2b; }
     .nav-menu a.active { background: #f0f0f0; border-bottom-color: #2d5016; color: #2d5016; }
     
-    .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+    .container { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
     
     .card {
       background: white;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 25px;
+      padding: 20px;
       margin-bottom: 20px;
+    }
+    
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2d5016;
     }
     
     .check-form {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       align-items: flex-end;
       flex-wrap: wrap;
     }
     
     .form-group {
       flex: 1;
-      min-width: 200px;
+      min-width: 100%;
     }
     
     .form-group label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 600;
       color: #333;
-      font-size: 14px;
+      font-size: 13px;
     }
     
     .form-group input,
     .form-group select {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border: 2px solid #ddd;
       border-radius: 8px;
       font-size: 14px;
     }
     
     .btn {
-      padding: 12px 24px;
+      width: 100%;
+      padding: 12px 20px;
       border: none;
       border-radius: 8px;
       font-size: 14px;
@@ -91,54 +102,53 @@
       color: white;
     }
     .btn-primary:hover { background: #4a7c2b; }
+    .btn-primary:active { transform: scale(0.98); }
     
     .result-card {
       background: white;
       border-radius: 10px;
-      padding: 20px;
-      margin-top: 20px;
+      padding: 15px;
+      margin-top: 15px;
       border-left: 4px solid #2d5016;
     }
     
     .result-card h3 {
       color: #2d5016;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
+      font-size: 16px;
     }
     
     .available {
       color: #155724;
       background: #d4edda;
-      padding: 12px 20px;
+      padding: 10px 15px;
       border-radius: 8px;
       font-weight: 600;
+      font-size: 13px;
     }
     
     .not-available {
       color: #721c24;
       background: #f8d7da;
-      padding: 12px 20px;
+      padding: 10px 15px;
       border-radius: 8px;
       font-weight: 600;
+      font-size: 13px;
     }
     
     .rooms-availability {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
     }
     
     .room-status-card {
       background: #f8f9fa;
-      padding: 15px;
+      padding: 12px;
       border-radius: 8px;
       border: 2px solid #e0e0e0;
       transition: all 0.3s;
-    }
-    
-    .room-status-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     .room-status-card.available {
@@ -153,23 +163,23 @@
     
     .room-name {
       font-weight: 600;
-      font-size: 16px;
-      margin-bottom: 8px;
+      font-size: 15px;
+      margin-bottom: 6px;
       color: #2d5016;
     }
     
     .room-info {
-      font-size: 13px;
+      font-size: 12px;
       color: #666;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     
     .status-dot {
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      margin-right: 8px;
+      margin-right: 6px;
     }
     
     .dot-available { background: #28a745; }
@@ -177,86 +187,84 @@
     
     .loading {
       text-align: center;
-      padding: 40px;
+      padding: 30px;
       color: #999;
+      font-size: 14px;
     }
     
-    /* CALENDAR STYLES */
+    /* MOBILE-OPTIMIZED CALENDAR */
     .calendar-container {
-      margin-top: 20px;
+      margin-top: 15px;
     }
     
     .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding: 15px;
+      margin-bottom: 15px;
+      padding: 12px;
       background: #2d5016;
       color: white;
       border-radius: 8px;
-    }
-    
-    .calendar-nav {
-      display: flex;
-      gap: 10px;
-      align-items: center;
     }
     
     .calendar-nav button {
       background: rgba(255,255,255,0.2);
       color: white;
       border: none;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
       transition: all 0.3s;
     }
     
-    .calendar-nav button:hover {
-      background: rgba(255,255,255,0.3);
+    .calendar-nav button:active {
+      background: rgba(255,255,255,0.4);
     }
     
     .calendar-month {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 600;
-      flex: 1;
       text-align: center;
+      flex: 1;
     }
     
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-      margin-bottom: 30px;
+      gap: 4px;
+      margin-bottom: 20px;
     }
     
     .calendar-day-header {
       text-align: center;
       font-weight: 600;
-      padding: 10px;
+      padding: 6px 2px;
       background: #f8f9fa;
-      border-radius: 5px;
-      font-size: 12px;
+      border-radius: 4px;
+      font-size: 10px;
       color: #666;
     }
     
     .calendar-day {
       aspect-ratio: 1;
       border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 8px;
-      font-size: 14px;
+      border-radius: 6px;
+      padding: 4px;
+      font-size: 11px;
       background: white;
-      transition: all 0.3s;
+      transition: all 0.2s;
       cursor: pointer;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     
-    .calendar-day:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    .calendar-day:active {
+      transform: scale(0.95);
     }
     
     .calendar-day.other-month {
@@ -283,22 +291,21 @@
     .calendar-day-number {
       font-weight: 600;
       color: #333;
-      margin-bottom: 5px;
     }
     
     .calendar-day-bookings {
-      font-size: 10px;
+      font-size: 8px;
       color: #666;
-      margin-top: 5px;
+      margin-top: 2px;
     }
     
     .calendar-day-indicator {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 3px;
+      right: 3px;
     }
     
     .indicator-occupied { background: #dc3545; }
@@ -306,34 +313,160 @@
     
     .legend {
       display: flex;
-      gap: 20px;
+      gap: 10px;
       justify-content: center;
       flex-wrap: wrap;
-      padding: 15px;
+      padding: 12px;
       background: #f8f9fa;
       border-radius: 8px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
     
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
+      gap: 6px;
+      font-size: 12px;
     }
     
     .legend-box {
-      width: 20px;
-      height: 20px;
-      border-radius: 5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
       border: 2px solid;
     }
     
-    @media (max-width: 768px) {
-      .check-form { flex-direction: column; }
-      .form-group { min-width: 100%; }
-      .calendar-grid { gap: 5px; }
-      .calendar-day { font-size: 12px; padding: 5px; }
+    /* USER INFO - MOBILE RESPONSIVE */
+    #userInfo {
+      position: absolute !important;
+      top: 10px !important;
+      right: 10px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      z-index: 1000 !important;
+    }
+    
+    #userInfo > div:first-child {
+      display: none;
+    }
+    
+    #userInfo button {
+      padding: 6px 12px !important;
+      background: rgba(255,77,77,0.9) !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 5px !important;
+      cursor: pointer !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+    }
+    
+    /* TABLET & DESKTOP */
+    @media (min-width: 768px) {
+      .header h1 { font-size: 32px; }
+      .header p { font-size: 16px; }
+      .header { padding: 30px; }
+      
+      .nav-menu a {
+        padding: 15px 30px;
+        font-size: 15px;
+      }
+      
+      .container {
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+      
+      .card {
+        padding: 25px;
+      }
+      
+      .card h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      
+      .check-form {
+        gap: 15px;
+      }
+      
+      .form-group {
+        min-width: 200px;
+      }
+      
+      .btn {
+        width: auto;
+      }
+      
+      .rooms-availability {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+      }
+      
+      .calendar-grid {
+        gap: 8px;
+      }
+      
+      .calendar-day {
+        font-size: 13px;
+        padding: 6px;
+      }
+      
+      .calendar-day-header {
+        font-size: 12px;
+        padding: 8px;
+      }
+      
+      .calendar-day:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      .calendar-day-indicator {
+        width: 8px;
+        height: 8px;
+        top: 4px;
+        right: 4px;
+      }
+      
+      .calendar-month {
+        font-size: 20px;
+      }
+      
+      .legend-item {
+        font-size: 14px;
+      }
+      
+      .legend-box {
+        width: 20px;
+        height: 20px;
+      }
+      
+      #userInfo > div:first-child {
+        display: block !important;
+      }
+      
+      #userInfo {
+        top: 20px !important;
+        right: 20px !important;
+        gap: 15px !important;
+      }
+      
+      #userInfo button {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+      }
+    }
+    
+    /* EXTRA SMALL SCREENS */
+    @media (max-width: 360px) {
+      .header h1 { font-size: 20px; }
+      .nav-menu a { padding: 10px 15px; font-size: 13px; }
+      .card { padding: 15px; }
+      .calendar-day { font-size: 10px; }
+      .calendar-day-header { font-size: 9px; }
+      .calendar-grid { gap: 3px; }
     }
   </style>
 </head>
@@ -358,7 +491,6 @@
       if (header && !document.getElementById('userInfo')) {
         const userInfo = document.createElement('div');
         userInfo.id = 'userInfo';
-        userInfo.style.cssText = 'position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 15px; z-index: 1000;';
         
         const loginTime = localStorage.getItem('tvb_loginTime');
         const loginDate = loginTime ? new Date(loginTime).toLocaleString('en-IN', { 
@@ -377,7 +509,7 @@
               Logged in: ${loginDate}
             </div>
           </div>
-          <button onclick="logout()" style="padding: 8px 16px; background: rgba(255,77,77,0.9); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600;">
+          <button onclick="logout()">
             <i class="fas fa-sign-out-alt"></i> Logout
           </button>
         `;
@@ -414,13 +546,13 @@
     <a href="dashboard.html">🏠 Home</a>
     <a href="bookings.html">📋 Bookings</a>
     <a href="availability.html" class="active">📅 Availability</a>
-    <a href="rooms.html">🏨 Room Management</a>
+    <a href="rooms.html">🏨 Rooms</a>
   </nav>
 
   <div class="container">
     
     <div class="card">
-      <h2 style="margin-bottom: 20px;">Check Availability</h2>
+      <h2>Check Availability</h2>
       
       <form class="check-form" id="availabilityForm">
         <div class="form-group">
@@ -450,21 +582,17 @@
 
     <!-- CALENDAR VIEW -->
     <div class="card">
-      <h2 style="margin-bottom: 20px;">📅 Booking Calendar</h2>
+      <h2>📅 Booking Calendar</h2>
       
       <div class="calendar-container">
         <div class="calendar-header">
-          <div class="calendar-nav">
-            <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> Prev</button>
-          </div>
+          <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
           <div class="calendar-month" id="calendarMonth">Loading...</div>
-          <div class="calendar-nav">
-            <button onclick="changeMonth(1)">Next <i class="fas fa-chevron-right"></i></button>
-          </div>
+          <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
         </div>
         
         <div class="calendar-grid" id="calendarGrid">
-          <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading calendar...</div>
+          <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
         </div>
         
         <div class="legend">
@@ -485,7 +613,7 @@
     </div>
 
     <div class="card">
-      <h2 style="margin-bottom: 20px;">All Rooms Status (Today)</h2>
+      <h2>All Rooms Status (Today)</h2>
       <div id="roomsStatusContainer" class="rooms-availability">
         <div class="loading">
           <i class="fas fa-spinner fa-spin"></i> Loading rooms...
@@ -518,15 +646,11 @@
 
     async function loadData() {
       try {
+        const url = new URL(API_URL);
+        
         const [roomsRes, bookingsRes] = await Promise.all([
-          fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'getRooms' })
-          }),
-          fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'getBookings' })
-          })
+          fetch(API_URL + '?action=getRooms'),
+          fetch(API_URL + '?action=getBookings')
         ]);
         
         const roomsResult = await roomsRes.json();
@@ -546,7 +670,7 @@
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        document.getElementById('roomsStatusContainer').innerHTML = '<p style="text-align: center; color: #999;">Error loading room status</p>';
+        document.getElementById('roomsStatusContainer').innerHTML = '<p style="text-align: center; color: #999;">Error loading data</p>';
       }
     }
 
@@ -581,46 +705,53 @@
         return;
       }
       
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            action: 'checkAvailability',
-            roomId: roomId,
-            checkinDate: checkin,
-            checkoutDate: checkout,
-            excludeRowIndex: null
-          })
-        });
-        
-        const result = await response.json();
-        
-        const resultDiv = document.getElementById('availabilityResult');
-        const room = rooms.find(r => String(r.room_id) === String(roomId));
-        
-        if (result.available) {
-          resultDiv.innerHTML = `
-            <div class="result-card">
-              <h3>${room.room_name}</h3>
-              <div class="available">
-                <i class="fas fa-check-circle"></i> Available! Room is free for your selected dates.
-              </div>
+      // Check availability locally
+      const availability = checkLocalAvailability(roomId, checkin, checkout);
+      
+      const resultDiv = document.getElementById('availabilityResult');
+      const room = rooms.find(r => String(r.room_id) === String(roomId));
+      
+      if (availability.available) {
+        resultDiv.innerHTML = `
+          <div class="result-card">
+            <h3>${room.room_name}</h3>
+            <div class="available">
+              <i class="fas fa-check-circle"></i> Available! Room is free for your selected dates.
             </div>
-          `;
-        } else {
-          resultDiv.innerHTML = `
-            <div class="result-card">
-              <h3>${room.room_name}</h3>
-              <div class="not-available">
-                <i class="fas fa-times-circle"></i> Not Available. ${result.message}
-              </div>
+          </div>
+        `;
+      } else {
+        resultDiv.innerHTML = `
+          <div class="result-card">
+            <h3>${room.room_name}</h3>
+            <div class="not-available">
+              <i class="fas fa-times-circle"></i> Not Available. ${availability.message}
             </div>
-          `;
-        }
-      } catch (error) {
-        console.error('Error checking availability:', error);
-        alert('Error checking availability. Please try again.');
+          </div>
+        `;
       }
+    }
+
+    function checkLocalAvailability(roomId, checkinDate, checkoutDate) {
+      const newCheckin = new Date(checkinDate);
+      const newCheckout = new Date(checkoutDate);
+      
+      for (let booking of bookings) {
+        if (String(booking.room_id) === String(roomId) && 
+            (booking.status === 'Confirmed' || booking.status === 'Checked-in')) {
+          const existingCheckin = new Date(booking.checkin_date);
+          const existingCheckout = new Date(booking.checkout_date);
+          
+          if (newCheckin < existingCheckout && newCheckout > existingCheckin) {
+            return {
+              available: false,
+              message: `Room ${roomId} is already booked from ${formatDate(existingCheckin)} to ${formatDate(existingCheckout)}`
+            };
+          }
+        }
+      }
+      
+      return { available: true, message: 'Room is available' };
     }
 
     // CALENDAR FUNCTIONS
@@ -633,24 +764,19 @@
       const year = currentCalendarDate.getFullYear();
       const month = currentCalendarDate.getMonth();
       
-      // Update month display
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                           'July', 'August', 'September', 'October', 'November', 'December'];
       document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
       
-      // Get first and last day of month
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
       const startingDayOfWeek = firstDay.getDay();
       const daysInMonth = lastDay.getDate();
-      
-      // Get previous month's last days
       const prevMonthLastDay = new Date(year, month, 0).getDate();
       
       const calendarGrid = document.getElementById('calendarGrid');
       calendarGrid.innerHTML = '';
       
-      // Day headers
       const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       dayHeaders.forEach(day => {
         const header = document.createElement('div');
@@ -659,14 +785,12 @@
         calendarGrid.appendChild(header);
       });
       
-      // Previous month days
       for (let i = startingDayOfWeek - 1; i >= 0; i--) {
         const day = prevMonthLastDay - i;
         const dayEl = createDayElement(day, true, new Date(year, month - 1, day));
         calendarGrid.appendChild(dayEl);
       }
       
-      // Current month days
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
@@ -680,7 +804,6 @@
           dayEl.classList.add('today');
         }
         
-        // Check for bookings on this date
         const dayBookings = getBookingsForDate(currentDate);
         if (dayBookings.length > 0) {
           dayEl.classList.add('has-bookings');
@@ -690,7 +813,7 @@
           
           const bookingInfo = document.createElement('div');
           bookingInfo.className = 'calendar-day-bookings';
-          bookingInfo.textContent = `${dayBookings.length} booking(s)`;
+          bookingInfo.textContent = `${dayBookings.length}`;
           dayEl.appendChild(bookingInfo);
         } else if (currentDate >= today) {
           dayEl.classList.add('available');
@@ -702,8 +825,7 @@
         calendarGrid.appendChild(dayEl);
       }
       
-      // Next month days
-      const remainingDays = 42 - (startingDayOfWeek + daysInMonth); // 6 rows × 7 days
+      const remainingDays = 42 - (startingDayOfWeek + daysInMonth);
       for (let day = 1; day <= remainingDays; day++) {
         const dayEl = createDayElement(day, true, new Date(year, month + 1, day));
         calendarGrid.appendChild(dayEl);
@@ -719,7 +841,6 @@
       dayNumber.textContent = day;
       dayEl.appendChild(dayNumber);
       
-      // Add click event
       dayEl.addEventListener('click', function() {
         showDayBookings(date);
       });
@@ -801,10 +922,10 @@
           <div class="room-info">
             <i class="fas fa-users"></i> ${room.capacity} persons
           </div>
-          <div class="room-info" style="font-weight: 600; margin-top: 8px; color: ${isAvailable ? '#155724' : '#721c24'};">
+          <div class="room-info" style="font-weight: 600; margin-top: 6px; color: ${isAvailable ? '#155724' : '#721c24'};">
             ${isAvailable ? '✓ Available' : '✗ Occupied'}
           </div>
-          ${occupiedBooking ? `<div class="room-info" style="font-size: 11px; color: #666; margin-top: 5px;">Until ${formatDate(occupiedBooking.checkout_date)}</div>` : ''}
+          ${occupiedBooking ? `<div class="room-info" style="font-size: 10px; color: #666; margin-top: 4px;">Until ${formatDate(occupiedBooking.checkout_date)}</div>` : ''}
         `;
         
         container.appendChild(card);
